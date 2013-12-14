@@ -49,7 +49,7 @@
   };
 
   var insertAfter = function(node, nodes) {
-    nodes = isArray(nodes) ? nodes : [nodes];
+    nodes = isArray(nodes) ? nodes.slice() : [nodes];
     nodes.unshift(node);
 
     for (var index = 1; index < nodes.length; index++) {
@@ -62,7 +62,7 @@
   };
 
   var insertBefore = function(node, nodes) {
-    nodes = isArray(nodes) ? nodes : [nodes];
+    nodes = isArray(nodes) ? nodes.slice() : [nodes];
     nodes.unshift(node);
 
     for (var index = 1; index < nodes.length; index++) {
@@ -277,7 +277,7 @@
             var itemNode = Handlebars.parseHTML(renderItem(item, index));
             var previous = nodes[index - 1] || marker;
             
-            insertAfter(previous, itemNode);
+            insertAfter(previous[previous.length - 1], itemNode);
             nodes.splice(index, 0, itemNode);
           } else {
             var itemMarker = document.createTextNode("");
