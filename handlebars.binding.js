@@ -93,8 +93,8 @@
     var marker = document.createTextNode("");
     var delimiter = document.createTextNode("");
 
-    var react = function(value) {
-      if (!document.body.contains(marker)) {
+    var react = function(value) {      
+      if (!document.body.contains(marker) && !document.body.contains(node)) {
         observer.close();
         return false;
       }
@@ -274,10 +274,10 @@
           var item = items[index];
           
           if (options.hash.single) {
-            var itemNode = Handlebars.parseHTML(renderItem(item, index));
+            var itemNode = Handlebars.parseHTML(renderItem(item, index))[0];
             var previous = nodes[index - 1] || marker;
             
-            insertAfter(previous[previous.length - 1], itemNode);
+            insertAfter(previous, itemNode);
             nodes.splice(index, 0, itemNode);
           } else {
             var itemMarker = document.createTextNode("");
@@ -310,7 +310,7 @@
         var item = items[index];
 
         if (options.hash.single) {
-          var itemNode = Handlebars.parseHTML(renderItem(item, index));
+          var itemNode = Handlebars.parseHTML(renderItem(item, index))[0];
           nodes.push(itemNode);
         } else {
           var itemMarker = document.createTextNode("");
@@ -322,6 +322,8 @@
           nodes.push(itemMarker, itemNode, itemDelimiter);
         }
       }
+
+      nodes = flatten(nodes);
 
       return toElement([marker, (empty ? Handlebars.parseHTML(render()) : nodes), delimiter]);
     } else {
