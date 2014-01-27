@@ -2,7 +2,7 @@ handlebars.binding
 ==================
 
 ## Bind helper
-```
+```html
 {{bind "foo"}}
 
 {{#bind "foo"}}
@@ -11,7 +11,7 @@ handlebars.binding
 ```
 
 ## If and Unless helper bind argument
-```
+```html
 {{if "foo" bind=true then="Hello" else="World"}}
 
 {{#if "foo" bind=true}}
@@ -22,7 +22,7 @@ handlebars.binding
 ```
 
 ## Each helper bind argument
-```
+```html
 {{#each collection var="item" bind=true}}
   <h2>Item {{index}}: {{item}}</h2>
 {{/each}}
