@@ -32,7 +32,7 @@
     }
 
     return object;
-  }
+  };
 
   var flatten = function(array, flattenArray) {
     flattenArray = flattenArray || [];
@@ -253,16 +253,19 @@
 
       if (splice.removed.length > 0) {
         for (var index = splice.index; index < (splice.index + splice.removed.length); index++) {
-          var item = items[index];
-
           if (options.hash.single) {
             nodes[index].remove();
-            nodes.splice(index, 1);
           } else {
             removeBetween(markers[index], delimiters[index]);
-
             markers[index].remove();
             delimiters[index].remove();
+          }
+        }
+
+        for (var index = splice.index; index < (splice.index + splice.removed.length); index++) {
+          if (options.hash.single) {
+            nodes.splice(index, 1);
+          } else {
             markers.splice(index, 1);
             delimiters.splice(index, 1);
           }
