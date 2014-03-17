@@ -24,11 +24,11 @@ handlebars.binding
 ```html
 <h1>{{if "foo" bind=true then="Hello" else="World"}}</h1>
 
-<h1 {{if "foo" bind-attr=true then="disabled" else="enabled"}}>
+<h1 {{if "foo" bindAttr=true then="disabled" else="enabled"}}>
   Hello {{foo}}, {{bar}}
 </h1>
 
-<h1 {{if "foo" bind-attr="class" then="hello" else="goodbye"}}>
+<h1 {{if "foo" bindAttr="class" then="hello" else="goodbye"}}>
   Hello {{foo}}, {{bar}}
 </h1>
 
