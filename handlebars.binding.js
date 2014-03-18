@@ -15,6 +15,10 @@
     return toString.call(object) == '[object Array]';
   };
 
+  var isFalsy = function(object) {
+    return !object || Handlebars.Utils.isEmpty(object);
+  };
+
   var path = function(context, key) {
     var paths = key.split('.');
     var object = context[paths.shift()];
@@ -80,26 +84,58 @@
     }
   };
 
-  var toElement = function(nodes) {
-    store[++increment] = flatten(nodes);
-    return new Handlebars.SafeString("<hb-binding id='" + increment + "'></hb-binding>");
+  var hasClass = function(node, value) {
+    return node.className.match(new RegExp('(\\s|^)' + value + '(\\s|$)'));
+  };
+
+  var addClass = function(node, value) {
+    if (!hasClass(node, value)) {
+      node.className += " " + value;
+    }
+  };
+
+  var removeClass = function(node, value) {
+    if (hasClass(node, value)) {
+      node.className = node.className.replace(new RegExp('(\\s|^)' + value + '(\\s|$)'), ' ');
+    }
+  };
+
+  var createElementBinding = function(id) {
+    return "<hb-binding id='" + id + "'></hb-binding>";
+  };
+
+  var createAttributeBinding = function(id) {
+    return "hb-binding-" + id;
   };
 
   Handlebars.registerHelper('bind', function(keypath, options) {
-    var node, nodes, observer;
+    var node, nodes, observer, attribute, previousValue;
     var context = this;
-    var single = !options.fn;
     var value = path(this, keypath);
     var marker = document.createTextNode("");
     var delimiter = document.createTextNode("");
+    var id = ++increment;
 
-    var react = function(value) {      
+    var react = function() {
       if (!document.body.contains(marker) && !document.body.contains(node)) {
-        observer.close();
-        return false;
+        return observer.close();
       }
 
-      if (single) {
+      if (options.hash.attr) {
+        if (options.hash.attr == "class") {
+          removeClass(node, previousValue);
+          if (value) addClass(node, value); 
+        } else if (options.hash.attr == true) {
+          node.removeAttribute(previousValue);
+          if (value) node.setAttribute(value, '');
+        } else {
+          if (value) {
+            node.setAttribute(options.hash.attr, value);
+          } else {
+            node.removeAttribute(options.hash.attr);
+          }
+        }
+      } else if (!options.fn) {
         node.textContent = value;
       } else {
         nodes = Handlebars.parseHTML(options.fn(context));
@@ -108,49 +144,65 @@
       }
     };
 
-    var observe = function(value, context, keypath) {
+    var observe = function() {
       if (isArray(value)) {
         return new ArrayObserver(value, function() {
-          react(value);
+          react();
         });
       } else if (isObject(value)) {
         return new ObjectObserver(value, function() {
-          react(value);
+          react();
         });
       } else {
-        return new PathObserver(context, keypath, function(value) {
-          react(value);
+        return new PathObserver(context, keypath, function(newValue) {
+          previousValue = value;
+          value = newValue;
+          react();
         });
       }
     };
 
-    observer = observe(value, this, keypath);
+    observer = observe();
 
-    if (single) {
+    if (options.hash.attr) {
+      Handlebars.registerAttribute("binding-" + id, function() {
+        node = this.ownerElement;
+        
+        if (options.hash.attr == "class") {
+          attribute = node.attributes.class;
+          if (value) addClass(node, value);
+        } else if (options.hash.attr == true) {
+          if (value) attribute = document.createAttribute(value);
+          if (attribute) return attribute;
+        } else {
+          attribute = document.createAttribute(options.hash.attr);
+          if (value) attribute.value = value;
+          return attribute;
+        }
+      });
+
+      return createAttributeBinding(id);
+    } else if (!options.fn) {
       node = document.createTextNode(value);
-      return toElement([node]);
+      store[id] = flatten([node]);
+
+      return new Handlebars.SafeString(createElementBinding(id));
     } else {
       nodes = Handlebars.parseHTML(options.fn(this));
-      return toElement([marker, nodes, delimiter]);
+      store[id] = flatten([marker, nodes, delimiter]);
+
+      return new Handlebars.SafeString(createElementBinding(id));
     }
   });
 
   Handlebars.registerHelper('if', function(conditional, options) {
-    var nodes, observer, keypath, falsy;
+    var node, nodes, observer, attribute, keypath, falsy, output, previousOutput;
     var context = this;
     var marker = document.createTextNode("");
     var delimiter = document.createTextNode("");
+    var id = ++increment;
 
-    if (isString(conditional) && options.hash.bind) {
-      keypath = conditional;
-      conditional = path(this, keypath);
-    }
-
-    var isFalsy = function(conditional) {
-      return !conditional || Handlebars.Utils.isEmpty(conditional);
-    };
-
-    var render = function(conditional) {
+    var render = function() {
       if (falsy) {
         return options.inverse ? options.inverse(context) : options.hash.else;
       } else {
@@ -158,40 +210,99 @@
       }
     };
 
-    var react = function(conditional) {
-      if (!document.body.contains(marker)) {
-        observer.close();
-        return false;
+    var react = function() {
+      if (!document.body.contains(marker) && !document.body.contains(node)) {
+        return observer.close();
       }
 
-      if (isFalsy(conditional) != falsy) {
-        falsy = isFalsy(conditional);
-        nodes = Handlebars.parseHTML(render(conditional));
+      if (options.hash.attr) {
+        if (options.hash.attr == "class") {
+          removeClass(node, previousOutput);
+          if (output) addClass(node, output);
+        } else if (options.hash.attr == true) {
+          node.removeAttribute(previousOutput);
+          if (output) node.setAttribute(output, '');
+        } else {
+          if (output) {
+            node.setAttribute(options.hash.attr, output);
+          } else {
+            node.removeAttribute(options.hash.attr);
+          }
+        }
+      } else {
+        nodes = Handlebars.parseHTML(output);
         removeBetween(marker, delimiter);
         insertAfter(marker, nodes);
       }
     };
 
-    var observe = function(conditional, context, keypath) {
+    var observe = function() {
       if (isArray(conditional)) {
         return new ArrayObserver(conditional, function() {
-          react(conditional);
+          if (isFalsy(conditional) != falsy) {
+            falsy = isFalsy(conditional);
+            previousOutput = output;
+            output = render();
+            react();
+          }
         });
       } else {
-        return new PathObserver(context, keypath, function(conditional) {
-          react(conditional);
+        return new PathObserver(context, keypath, function(newConditional) {
+          conditional = newConditional;
+
+          if (isFalsy(conditional) != falsy) {
+            falsy = isFalsy(conditional);
+            previousOutput = output;
+            output = render();
+            react();
+          }
         });
       }
     };
 
+    if (options.hash.bindAttr) {
+      options.hash.attr = options.hash.bindAttr;
+      options.hash.bind = true;
+    }
+
+    if (options.hash.bind && isString(conditional)) {
+      keypath = conditional;
+      conditional = path(this, keypath);
+    }
+
     falsy = isFalsy(conditional);
+    output = render();
 
     if (options.hash.bind) {
-      observer = observe(conditional, this, keypath);
-      nodes = Handlebars.parseHTML(render(conditional));
-      return toElement([marker, nodes, delimiter]);
+      observer = observe();
+
+      if (options.hash.attr) {
+        Handlebars.registerAttribute("binding-" + id, function() {
+          node = this.ownerElement;
+          
+          if (options.hash.attr == "class") {
+            attribute = node.attributes.class;
+            if (output) addClass(node, output);
+          } else if (options.hash.attr == true) {
+            if (output) attribute = document.createAttribute(output);
+            if (attribute) return attribute;
+          } else {
+            attribute = document.createAttribute(options.hash.attr);
+            if (output) attribute.value = output;
+            return attribute;
+          }
+        });
+
+        return createAttributeBinding(id);
+      } else {
+        nodes = Handlebars.parseHTML(output);
+        store[id] = flatten([marker, nodes, delimiter]);
+        observer = observe();
+
+        return new Handlebars.SafeString(createElementBinding(id));
+      }
     } else {
-      return render(conditional);
+      return output;
     }
   });
 
@@ -210,15 +321,18 @@
   });
 
   Handlebars.registerHelper('each', function(items, options) {
-    var node, nodes, observer, empty;
+    var node, observer, output;
     var context = this;
     var marker = document.createTextNode("");
     var markers = [];
     var delimiter = document.createTextNode("");
     var delimiters = [];
+    var nodes = [];
+    var empty = items.length == 0;
+    var id = ++increment;
 
     var render = function() {
-      var output = "";
+      output = "";
 
       for (var index = 0; index < items.length; index++) {
         output += renderItem(items[index], index);
@@ -237,13 +351,13 @@
 
     var react = function(splice) {
       if (!document.body.contains(marker)) {
-        observer.close();
-        return false;
+        return observer.close();
       }
 
       if (items.length == 0 && !empty) {
         empty = true;
-        insertAfter(marker, Handlebars.parseHTML(render()));
+        output = render();
+        insertAfter(marker, Handlebars.parseHTML(output));
       }
       
       if (items.length > 0 && empty) {
@@ -296,7 +410,7 @@
       }
     };
 
-    var observe = function(items) {
+    var observe = function() {
       return new ArrayObserver(items, function(splices) {
         for (var index = 0; index < splices.length; index++) {
           react(splices[index]);
@@ -304,11 +418,9 @@
       });
     };
 
-    if (options.hash.bind) {
-      observer = observe(items);
-      empty = items.length == 0;
-      nodes = [];
+    output = render();
 
+    if (options.hash.bind) {
       for (var index = 0; index < items.length; index++) {
         var item = items[index];
 
@@ -326,11 +438,13 @@
         }
       }
 
+      observer = observe();
       nodes = flatten(nodes);
+      store[id] = flatten([marker, (empty ? Handlebars.parseHTML(output) : nodes), delimiter]);
 
-      return toElement([marker, (empty ? Handlebars.parseHTML(render()) : nodes), delimiter]);
+      return new Handlebars.SafeString(createElementBinding(id));
     } else {
-      return render();
+      return output;
     }
   });
 
