@@ -165,9 +165,7 @@
     observer = observe();
 
     if (options.hash.attr) {
-      Handlebars.registerAttribute("binding-" + id, function() {
-        node = this.ownerElement;
-        
+      Handlebars.registerAttribute("binding-" + id, function(node) {        
         if (options.hash.attr == "class") {
           attribute = node.attributes.class;
           if (value) addClass(node, value);
@@ -277,9 +275,7 @@
       observer = observe();
 
       if (options.hash.attr) {
-        Handlebars.registerAttribute("binding-" + id, function() {
-          node = this.ownerElement;
-          
+        Handlebars.registerAttribute("binding-" + id, function(node) {          
           if (options.hash.attr == "class") {
             attribute = node.attributes.class;
             if (output) addClass(node, output);
@@ -342,9 +338,13 @@
     };
 
     var renderItem = function(item, index) {
-      var itemContext = extend({}, context);
-      itemContext[options.hash.var] = item;
-      itemContext.index = index;
+      var itemContext = extend({index: index}, context);
+
+      if (options.hash.var) {
+        itemContext[options.hash.var] = item;
+      } else {
+        itemContext = extend(itemContext, item);
+      }
 
       return options.fn(itemContext);
     };
