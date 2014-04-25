@@ -165,7 +165,8 @@
     observer = observe();
 
     if (options.hash.attr) {
-      Handlebars.registerAttribute("binding-" + id, function(node) {        
+      Handlebars.registerAttribute("binding-" + id, function(element) {  
+        node = element
         if (options.hash.attr == "class") {
           attribute = node.attributes.class;
           if (value) addClass(node, value);
@@ -275,7 +276,8 @@
       observer = observe();
 
       if (options.hash.attr) {
-        Handlebars.registerAttribute("binding-" + id, function(node) {          
+        Handlebars.registerAttribute("binding-" + id, function(element) { 
+          node = element         
           if (options.hash.attr == "class") {
             attribute = node.attributes.class;
             if (output) addClass(node, output);
