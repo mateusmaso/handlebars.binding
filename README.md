@@ -5,11 +5,11 @@ This library is an extension for Handlebars which allows using data binding on e
 
 ## Features
 
-* One-way data binding
-* New ```bind``` helper method
-* ```each```, ```if``` and ```unless``` helper enhancement
-* Support for block, attribute and inline binding
-* Optional use and works with existing handlebars templates
+* One-way data binding.
+* New ```bind``` helper method.
+* ```each```, ```if``` and ```unless``` helper enhancement.
+* Support for block, attribute and inline binding.
+* Optional use and works with existing handlebars templates.
 
 ## Dependencies
 
