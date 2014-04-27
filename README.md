@@ -1,7 +1,22 @@
 handlebars.binding
 ==================
 
-### Bind helper
+This library is an extension of Handlebars which allows the choice of using data binding on existing templates. At the same time, it tries to give a powerful way with simple expressions to solve this big gap while building high interactivity templates.
+
+## Features
+
+* One-way data-binding
+* If and Unless helper enhancement
+* Support for block, attribute and inline binding
+* Optional use and works with existing handlebars templates
+
+## Dependencies
+
+* observe.js
+* handlebars.js (>= 1.0)
+  * handlebars.element.js
+
+## Bind helper
 
 ```html
 <h1>{{bind "foo"}}</h1>
@@ -19,7 +34,7 @@ handlebars.binding
 {{/bind}}
 ```
 
-### If and Unless helper bind argument
+## If and Unless helper
 
 ```html
 <h1>{{if "foo" bind=true then="Hello" else="World"}}</h1>
@@ -39,7 +54,7 @@ handlebars.binding
 {{/if}}
 ```
 
-### Each helper bind argument
+## Each helper
 
 ```html
 {{#each collection var="item" bind=true}}
@@ -54,3 +69,7 @@ handlebars.binding
   </div>
 {{/each}}
 ```
+
+## License
+
+Copyright (c) 2013-2014 Mateus Maso. Released under an MIT license.
