@@ -1,13 +1,13 @@
 handlebars.binding
 ==================
 
-This library is an extension for Handlebars which allows the choice of using data binding on existing templates. At the same time, it tries to give a powerful way with simple expressions to solve this big gap while building high interactivity templates.
+This library is an extension for Handlebars which allows the choice of using data binding on existing templates. At the same time, it offers a simple and powerful way to solve this big gap when building high interactivity templates.
 
 ## Features
 
 * One-way data binding
-* New Bind helper method
-* Each, If and Unless helper enhancement
+* New ```bind``` helper method
+* ```each```, ```if``` and ```unless``` helper enhancement
 * Support for block, attribute and inline binding
 * Optional use and works with existing handlebars templates
 
