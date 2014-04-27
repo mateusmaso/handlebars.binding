@@ -6,7 +6,8 @@ This library is an extension for Handlebars which allows the choice of using dat
 ## Features
 
 * One-way data binding
-* If and Unless helper enhancement
+* New Bind helper method
+* Each, If and Unless helper enhancement
 * Support for block, attribute and inline binding
 * Optional use and works with existing handlebars templates
 
