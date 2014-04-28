@@ -1,7 +1,7 @@
 handlebars.binding
 ==================
 
-This library is an extension for Handlebars which allows using data binding on existing templates. At the same time, it offers a simple and powerful way to solve this big gap when building highly interactive templates.
+This library is an extension for Handlebars which allows using data binding on existing templates. At the same time, it offers a simple and powerful way to solve this big gap while building highly interactive templates.
 
 ## Features
 
