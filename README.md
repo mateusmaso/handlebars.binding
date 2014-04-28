@@ -19,7 +19,7 @@ This library is an extension for Handlebars which allows using data binding on e
 
 ## Usage
 
-Before including the library, make sure to import all the dependencies in the same order as listed in the section above. Once made that, don't forget to parse the rendered HTML from your template function and notify any changes using the method ```performMicrotaskCheckpoint```.
+Before including the library, make sure to import all the dependencies in the same order as listed in the section above. Once made that, don't forget to parse the rendered HTML from your template function and notify any changes by calling the method ```performMicrotaskCheckpoint```.
 
 ```javascript
 var context = {foo: 123};
