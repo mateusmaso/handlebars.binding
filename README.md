@@ -1,14 +1,14 @@
 handlebars.binding
 ==================
 
-This library is an extension for Handlebars which allows using data binding on existing templates. At the same time, it offers a simple and powerful way to solve this big gap when building high interactivity templates.
+This library is an extension for Handlebars which allows using data binding on existing templates. At the same time, it offers a simple and powerful way to solve this big gap when building highly interactive templates.
 
 ## Features
 
 * One-way data binding.
 * New ```bind``` helper method.
-* ```each```, ```if``` and ```unless``` helper enhancement.
 * Support for block, attribute and inline binding.
+* ```each```, ```if``` and ```unless``` helper enhancement.
 * Optional use and works with existing handlebars templates.
 
 ## Dependencies
@@ -19,7 +19,7 @@ This library is an extension for Handlebars which allows using data binding on e
 
 ## Usage
 
-Before including the library, make sure that you imported the dependencies in the same order as the section above shows up. Once made that, don't forget to parse the rendered HTML from your template function and notify any changes made using the method ```performMicrotaskCheckpoint```.
+Before including the library, make sure to import all the dependencies in the same order as listed in the section above. Once made that, don't forget to parse the rendered HTML from your template function and notify any changes using the method ```performMicrotaskCheckpoint```.
 
 ```javascript
 var context = {foo: 123};
