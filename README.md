@@ -5,6 +5,7 @@ This library is an extension for Handlebars which allows using data binding on e
 
 ## Features
 
+* Clean markup.
 * One-way data binding.
 * New ```bind``` helper method.
 * Support for block, attribute and inline binding.
