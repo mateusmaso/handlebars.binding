@@ -29,11 +29,19 @@
   };
 
   Handlebars.Utils.addClass = function(node, value) {
-    if (!Utils.hasClass(node, value)) return node.className += " " + value;
+    if (!Utils.hasClass(node, value)) {
+      if (node.className.length == 0) {
+        return node.className = value;
+      } else {
+        return node.className += " " + value;
+      }
+    }
   };
 
   Handlebars.Utils.removeClass = function(node, value) {
-    if (Utils.hasClass(node, value)) return node.className = node.className.replace(new RegExp('(\\s|^)' + value + '(\\s|$)'), ' ');
+    if (Utils.hasClass(node, value)) {
+      return node.className = node.className.replace(new RegExp('(\\s|^)' + value + '(\\s|$)'), '');
+    }
   };
 
   Handlebars.Utils.removeBetween = function(firstNode, lastNode) {

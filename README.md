@@ -79,13 +79,6 @@ Platform.performMicrotaskCheckpoint();
   <h2>Item {{index}}: {{item}}</h2>
   <p>{{item.content}}</p>
 {{/each}}
-
-{{#each sortableCollection var="item" bind=true single=true}}
-  <div class="sortable-class">
-    <h2>Item {{index}}: {{item}}</h2>
-    <p>{{item.content}}</p>
-  </div>
-{{/each}}
 ```
 
 ## License
