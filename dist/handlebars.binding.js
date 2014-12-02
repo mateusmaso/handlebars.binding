@@ -1,6 +1,6 @@
 // handlebars.binding
 // ------------------
-// v0.1.0
+// v0.1.1
 //
 // Copyright (c) 2013-2014 Mateus Maso
 // Distributed under MIT license
@@ -66,7 +66,11 @@
   Handlebars.Utils.path = function(context, key) {
     var paths = key.split('.');
     var object = context[paths.shift()];
-    for (var index = 0; index < paths.length; index++) object = object[paths[index]];
+
+    for (var index = 0; index < paths.length; index++) {
+      object = object[paths[index]];
+    }
+
     return object;
   };
 
@@ -282,7 +286,11 @@
 
     var render = function() {
       output = "";
-      for (var index = 0; index < items.length; index++) output += renderItem(items[index], index);
+
+      for (var index = 0; index < items.length; index++) {
+        output += renderItem(items[index], index);
+      }
+
       return items.length ? output : options.inverse(context);
     };
 

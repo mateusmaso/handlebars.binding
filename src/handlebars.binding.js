@@ -57,7 +57,11 @@
   Handlebars.Utils.path = function(context, key) {
     var paths = key.split('.');
     var object = context[paths.shift()];
-    for (var index = 0; index < paths.length; index++) object = object[paths[index]];
+
+    for (var index = 0; index < paths.length; index++) {
+      object = object[paths[index]];
+    }
+
     return object;
   };
 
@@ -273,7 +277,11 @@
 
     var render = function() {
       output = "";
-      for (var index = 0; index < items.length; index++) output += renderItem(items[index], index);
+
+      for (var index = 0; index < items.length; index++) {
+        output += renderItem(items[index], index);
+      }
+
       return items.length ? output : options.inverse(context);
     };
 

@@ -1,26 +1,34 @@
 handlebars.binding [![Build Status](https://travis-ci.org/mateusmaso/handlebars.binding.svg?branch=master)](https://travis-ci.org/mateusmaso/handlebars.binding)
 ==================
 
-This library is an extension for Handlebars which allows using data binding on existing templates. At the same time, it offers a simple and powerful way to solve this big gap while building highly interactive templates.
+This library is an extension for Handlebars which allows using data binding on pre-existing templates. Yet, it offers a simple and powerful way of building highly interactive templates without re-rendering or updating DOM manually.
 
 ## Features
 
 * Clean markup.
 * One-way data binding.
 * New ```bind``` helper method.
-* Support for block, attribute and inline binding.
+* Support for blocks, attributes and inline binding.
 * ```each```, ```if``` and ```unless``` helper enhancement.
-* Optional use and works with existing handlebars templates.
+* Optional use and works on pre-existing handlebars templates.
 
 ## Dependencies
 
-* observe.js
-* handlebars.js (>= 1.0)
-  * handlebars.element.js
+* observe.js (>= 0.4.0)
+* handlebars.js (>= 1.1.0)
+  * handlebars.element.js (>= 0.1.2)
+
+## Node
+
+```javascript
+var Handlebars = global.Handlebars = require("handlebars");
+require("handlebars.element");
+require("handlebars.binding");
+```
 
 ## Usage
 
-Before including the library, make sure to import all the dependencies in the same order as listed in the section above. Once made that, don't forget to parse the rendered HTML from your template function and notify any changes by calling the method ```performMicrotaskCheckpoint```.
+Before including the library, make sure to import all the dependencies in the same order as listed previously. Once made it, don't forget to parse the rendered string HTML from your template's method and notify any changes by calling the method ```performMicrotaskCheckpoint``` if needed.
 
 ```javascript
 var context = {foo: 123};
@@ -29,7 +37,7 @@ var nodes = Handlebars.parseHTML(template(context));
 
 context.foo = 321;
 
-Platform.performMicrotaskCheckpoint();
+Platform.performMicrotaskCheckpoint(); // older browsers support
 ```
 
 ## Examples
