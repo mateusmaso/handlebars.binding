@@ -9,7 +9,7 @@ This library is an extension for Handlebars which allows using data binding on p
 * One-way data binding.
 * New ```bind``` helper method.
 * Support for blocks, attributes and inline binding.
-* ```each```, ```if``` and ```unless``` helper enhancement.
+* Now ```each```, ```if``` and ```unless``` allows binding.
 * Optional use and works on pre-existing handlebars templates.
 
 ## Dependencies
@@ -28,7 +28,7 @@ require("handlebars.binding");
 
 ## Usage
 
-Before including the library, make sure to import all the dependencies in the same order as listed previously. Once made it, don't forget to parse the rendered string HTML from your template's method and notify any changes by calling the method ```performMicrotaskCheckpoint``` if needed.
+When including the library, make sure to import all the dependencies in the same order as listed before. Once made it, do not forget to parse the rendered string HTML from your template's method and notify any changes by calling the ```performMicrotaskCheckpoint``` if needed.
 
 ```javascript
 var context = {foo: 123};
