@@ -74,22 +74,26 @@
     var context = this;
 
     var react = function() {
-      if (options.hash.attr) {
-        if (options.hash.attr == true) {
-          node.removeAttribute(previousValue);
-          node.setAttribute(value, '');
-        } else if (options.hash.attr == "class") {
-          Utils.removeClass(node, previousValue);
-          Utils.addClass(node, value);
+      try {
+        if (options.hash.attr) {
+          if (options.hash.attr == true) {
+            node.removeAttribute(previousValue);
+            node.setAttribute(value, '');
+          } else if (options.hash.attr == "class") {
+            Utils.removeClass(node, previousValue);
+            Utils.addClass(node, value);
+          } else {
+            node.setAttribute(options.hash.attr, value);
+          }
+        } else if (!options.fn) {
+          node.textContent = Utils.escapeExpression(value);
         } else {
-          node.setAttribute(options.hash.attr, value);
+          nodes = Handlebars.parseHTML(options.fn(context));
+          Utils.removeBetween(marker, delimiter);
+          Utils.insertAfter(marker, nodes);
         }
-      } else if (!options.fn) {
-        node.textContent = Utils.escapeExpression(value);
-      } else {
-        nodes = Handlebars.parseHTML(options.fn(context));
-        Utils.removeBetween(marker, delimiter);
-        Utils.insertAfter(marker, nodes);
+      } catch(exception) {
+        observer.close();
       }
     };
 
@@ -159,22 +163,26 @@
     };
 
     var react = function() {
-      if (options.hash.attr) {
-        if (options.hash.attr == true) {
-          node.removeAttribute(previousOutput);
-          if (output) node.setAttribute(output, "");
-        } else if (options.hash.attr == "class") {
-          Utils.removeClass(node, previousOutput);
-          if (output) Utils.addClass(node, output);
+      try {
+        if (options.hash.attr) {
+          if (options.hash.attr == true) {
+            node.removeAttribute(previousOutput);
+            if (output) node.setAttribute(output, "");
+          } else if (options.hash.attr == "class") {
+            Utils.removeClass(node, previousOutput);
+            if (output) Utils.addClass(node, output);
+          } else {
+            node.setAttribute(options.hash.attr, output);
+          }
+        } else if (!options.fn) {
+          node.textContent = Utils.escapeExpression(output);
         } else {
-          node.setAttribute(options.hash.attr, output);
+          nodes = Handlebars.parseHTML(output);
+          Utils.removeBetween(marker, delimiter);
+          Utils.insertAfter(marker, nodes);
         }
-      } else if (!options.fn) {
-        node.textContent = Utils.escapeExpression(output);
-      } else {
-        nodes = Handlebars.parseHTML(output);
-        Utils.removeBetween(marker, delimiter);
-        Utils.insertAfter(marker, nodes);
+      } catch(exception) {
+        observer.close();
       }
     };
 
@@ -303,42 +311,46 @@
     };
 
     var react = function(splice) {
-      if (items.length == 0 && !empty) {
-        empty = true;
-        output = render();
-        Utils.insertAfter(marker, Handlebars.parseHTML(output));
-      }
-
-      if (items.length > 0 && empty) {
-        empty = false;
-        Utils.removeBetween(marker, delimiter);
-      }
-
-      if (splice.removed.length > 0) {
-        for (var index = splice.index; index < (splice.index + splice.removed.length); index++) {
-          Utils.removeBetween(markers[index], delimiters[index]);
-          markers[index].remove();
-          delimiters[index].remove();
+      try {
+        if (items.length == 0 && !empty) {
+          empty = true;
+          output = render();
+          Utils.insertAfter(marker, Handlebars.parseHTML(output));
         }
 
-        for (var index = splice.index; index < (splice.index + splice.removed.length); index++) {
-          markers.splice(index, 1);
-          delimiters.splice(index, 1);
+        if (items.length > 0 && empty) {
+          empty = false;
+          Utils.removeBetween(marker, delimiter);
         }
-      }
 
-      if (splice.addedCount > 0) {
-        for (var index = splice.index; index < (splice.index + splice.addedCount); index++) {
-          var item = items[index];
-          var itemMarker = document.createTextNode("");
-          var itemDelimiter = document.createTextNode("");
-          var itemNode = Handlebars.parseHTML(renderItem(item, index));
-          var previous = delimiters[index - 1] || marker;
+        if (splice.removed.length > 0) {
+          for (var index = splice.index; index < (splice.index + splice.removed.length); index++) {
+            Utils.removeBetween(markers[index], delimiters[index]);
+            markers[index].remove();
+            delimiters[index].remove();
+          }
 
-          Utils.insertAfter(previous, Utils.flatten([itemMarker, itemNode, itemDelimiter]))
-          markers.splice(index, 0, itemMarker);
-          delimiters.splice(index, 0, itemDelimiter);
+          for (var index = splice.index; index < (splice.index + splice.removed.length); index++) {
+            markers.splice(index, 1);
+            delimiters.splice(index, 1);
+          }
         }
+
+        if (splice.addedCount > 0) {
+          for (var index = splice.index; index < (splice.index + splice.addedCount); index++) {
+            var item = items[index];
+            var itemMarker = document.createTextNode("");
+            var itemDelimiter = document.createTextNode("");
+            var itemNode = Handlebars.parseHTML(renderItem(item, index));
+            var previous = delimiters[index - 1] || marker;
+
+            Utils.insertAfter(previous, Utils.flatten([itemMarker, itemNode, itemDelimiter]))
+            markers.splice(index, 0, itemMarker);
+            delimiters.splice(index, 0, itemDelimiter);
+          }
+        }
+      } catch(exception) {
+        observer.close();
       }
     };
 
