@@ -1,8 +1,8 @@
 // handlebars.binding
 // ------------------
-// v0.1.2
+// v0.1.3
 //
-// Copyright (c) 2013-2014 Mateus Maso
+// Copyright (c) 2013-2015 Mateus Maso
 // Distributed under MIT license
 //
 // http://github.com/mateusmaso/handlebars.binding
@@ -95,7 +95,11 @@
             node.setAttribute(options.hash.attr, value);
           }
         } else if (!options.fn) {
-          node.textContent = Utils.escapeExpression(value);
+          if (Utils.isString(value)) {
+            node.textContent = Utils.escapeExpression(new Handlebars.SafeString(value));
+          } else {
+            node.textContent = Utils.escapeExpression(value);
+          }
         } else {
           nodes = Handlebars.parseHTML(options.fn(context));
           Utils.removeBetween(marker, delimiter);
@@ -146,7 +150,12 @@
 
       return createAttributeBinding(id);
     } else if (!options.fn) {
-      node = document.createTextNode(Utils.escapeExpression(value));
+      if (Utils.isString(value)) {
+        node = document.createTextNode(Utils.escapeExpression(new Handlebars.SafeString(value)));
+      } else {
+        node = document.createTextNode(Utils.escapeExpression(value));
+      }
+
       Handlebars.store.hold(id, Utils.flatten([node]));
       return new Handlebars.SafeString(createElementBinding(id));
     } else {
@@ -184,7 +193,11 @@
             node.setAttribute(options.hash.attr, output);
           }
         } else if (!options.fn) {
-          node.textContent = Utils.escapeExpression(output);
+          if (Utils.isString(output)) {
+            node.textContent = Utils.escapeExpression(new Handlebars.SafeString(output));
+          } else {
+            node.textContent = Utils.escapeExpression(output);
+          }
         } else {
           nodes = Handlebars.parseHTML(output);
           Utils.removeBetween(marker, delimiter);
@@ -253,7 +266,12 @@
 
         return createAttributeBinding(id);
       } else if (!options.fn) {
-        node = document.createTextNode(Utils.escapeExpression(output));
+        if (Utils.isString(output)) {
+          node = document.createTextNode(Utils.escapeExpression(new Handlebars.SafeString(output)));
+        } else {
+          node = document.createTextNode(Utils.escapeExpression(output));
+        }
+
         Handlebars.store.hold(id, Utils.flatten([node]));
         return new Handlebars.SafeString(createElementBinding(id));
       } else {
