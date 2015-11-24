@@ -283,4 +283,34 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
         });
       });
     });
+
+    describe("unbind/bind", function() {
+      before(function() {
+        this.context = {foo: 123};
+        this.template = Handlebars.compile("{{bind 'foo'}}");
+        this.node = Handlebars.parseHTML(this.template(this.context))[0];
+      });
+
+      it("should unbind", function(done) {
+        Handlebars.unbind(this.node);
+        this.context.foo = 321;
+        Platform.performMicrotaskCheckpoint();
+
+        setTimeout(function() {
+          chai.expect(this.node.textContent).to.equal("123");
+          done();
+        }.bind(this));
+      });
+
+      it("should bind", function(done) {
+        Handlebars.bind(this.node);
+        this.context.foo = 111;
+        Platform.performMicrotaskCheckpoint();
+
+        setTimeout(function() {
+          chai.expect(this.node.textContent).to.equal("111");
+          done();
+        }.bind(this));
+      });
+    });
   });

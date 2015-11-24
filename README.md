@@ -16,7 +16,7 @@ This library is an extension for Handlebars which allows using data binding on p
 
 * observe.js (>= 0.4.0)
 * handlebars.js (>= 1.1.0)
-  * handlebars.element.js (>= 0.1.2)
+  * handlebars.element.js (>= 0.1.3)
 
 ## Node
 
@@ -87,6 +87,13 @@ Platform.performMicrotaskCheckpoint(); // older browsers support
   <h2>Item {{index}}: {{item}}</h2>
   <p>{{item.content}}</p>
 {{/each}}
+```
+
+### Unbind and Bind methods
+
+```javascript
+Handlebars.unbind(node);
+Handlebars.bind(node);
 ```
 
 ## License
