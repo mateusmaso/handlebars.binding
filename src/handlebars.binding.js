@@ -96,19 +96,26 @@
     if (keypath) this.value = Utils.path(this.context, this.keypath);
 
     this.marker = document.createTextNode("");
+    this.marker.binding = this;
     this.delimiter = document.createTextNode("");
 
     this.render();
+  };
+
+  Handlebars.Binding.prototype.initialize = function() {
+    var html;
 
     if (this.options.hash.attr) {
-      this.el = this.initializeAttribute();
+      html = this.initializeAttribute();
     } else if (!this.options.fn) {
-      this.el = this.initializeInline();
+      html = this.initializeInline();
     } else {
-      this.el = this.initializeBlock();
+      html = this.initializeBlock();
     }
 
-    this.marker.binding = this;
+    this.observe();
+
+    return html;
   };
 
   Handlebars.Binding.prototype.render = function() {
@@ -283,7 +290,7 @@
         }
       }.bind(this));
     } else {
-      this.observer = new PathObserver(this.context, keypath);
+      this.observer = new PathObserver(this.context, this.keypath);
       this.observer.open(function(conditional) {
         this.conditional = conditional;
         if (Utils.isFalsy(this.conditional) != this.falsy) {
@@ -418,11 +425,12 @@
 
   Handlebars.registerHelper('bind', function(keypath, options) {
     var binding = new Handlebars.Binding(this, keypath, null, options);
-    binding.observe();
-    return binding.el;
+    return binding.initialize();
   });
 
   Handlebars.registerHelper('if', function(conditional, options) {
+    var keypath;
+
     if (options.hash.bindAttr) {
       options.hash.attr = options.hash.bindAttr;
       options.hash.bind = true;
@@ -434,8 +442,12 @@
     }
 
     var binding = new Handlebars.IfBinding(this, keypath, conditional, options);
-    if (options.hash.bind) binding.observe();
-    return binding.el;
+
+    if (options.hash.bind) {
+      return binding.initialize();
+    } else {
+      return binding.output;
+    }
   });
 
   Handlebars.registerHelper("unless", function(conditional, options) {
@@ -454,8 +466,12 @@
 
   Handlebars.registerHelper('each', function(items, options) {
     var binding = new Handlebars.EachBinding(this, null, items, options);
-    if (options.hash.bind) binding.observe();
-    return binding.el;
+
+    if (options.hash.bind) {
+      return binding.initialize();
+    } else {
+      return binding.output;
+    }
   });
 
   Handlebars.registerElement('binding', function(attributes) {
