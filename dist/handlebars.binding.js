@@ -1,6 +1,6 @@
 // handlebars.binding
 // ------------------
-// v0.1.5
+// v0.1.6
 //
 // Copyright (c) 2013-2015 Mateus Maso
 // Distributed under MIT license
@@ -289,21 +289,21 @@
   };
 
   Handlebars.IfBinding.prototype.observe = function() {
-    if (Utils.isArray(this.conditional)) {
-      this.observer = new ArrayObserver(this.conditional);
+    if (Utils.isArray(this.value)) {
+      this.observer = new ArrayObserver(this.value);
       this.observer.open(function() {
-        if (Utils.isFalsy(this.conditional) != this.falsy) {
-          this.falsy = Utils.isFalsy(this.conditional);
+        if (Utils.isFalsy(this.value) != this.falsy) {
+          this.falsy = Utils.isFalsy(this.value);
           this.render();
           this.react();
         }
       }.bind(this));
     } else {
       this.observer = new PathObserver(this.context, this.keypath);
-      this.observer.open(function(conditional) {
-        this.conditional = conditional;
-        if (Utils.isFalsy(this.conditional) != this.falsy) {
-          this.falsy = Utils.isFalsy(this.conditional);
+      this.observer.open(function(value) {
+        this.value = value;
+        if (Utils.isFalsy(this.value) != this.falsy) {
+          this.falsy = Utils.isFalsy(this.value);
           this.render();
           this.react();
         }
