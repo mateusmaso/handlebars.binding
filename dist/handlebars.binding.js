@@ -1,6 +1,6 @@
 // handlebars.binding
 // ------------------
-// v0.1.6
+// v0.1.7
 //
 // Copyright (c) 2013-2015 Mateus Maso
 // Distributed under MIT license
@@ -92,9 +92,7 @@
     this.id = Utils.uniqueId();
 
     this.node;
-    this.nodes = [];
-    this.attribute;
-
+    this.observer;
     this.output;
     this.previousOutput;
 
@@ -105,26 +103,37 @@
     if (keypath) this.value = Utils.path(this.context, this.keypath);
 
     this.marker = document.createTextNode("");
-    this.marker.binding = this;
     this.delimiter = document.createTextNode("");
 
     this.render();
   };
 
   Handlebars.Binding.prototype.initialize = function() {
-    var html;
-
     if (this.options.hash.attr) {
-      html = this.initializeAttribute();
+      var attributeName = "binding-" + this.id;
+
+      Handlebars.registerAttribute(attributeName, function(node) {
+        return this.initializeAttribute(node);
+      }.bind(this), {
+        ready: function(node) {
+          this.observe();
+          this.setNode(node);
+          delete Handlebars.attributes[attributeName];
+        }.bind(this)
+      });
+
+      return this.createAttribute();
     } else if (!this.options.fn) {
-      html = this.initializeInline();
+      this.observe();
+      this.setNode(this.initializeInline());
+      Handlebars.store.hold(this.id, Utils.flatten([this.node]));
+      return new Handlebars.SafeString(this.createElement());
     } else {
-      html = this.initializeBlock();
+      this.observe();
+      this.marker.binding = this;
+      Handlebars.store.hold(this.id, Utils.flatten([this.marker, this.initializeBlock(), this.delimiter]));
+      return new Handlebars.SafeString(this.createElement());
     }
-
-    this.observe();
-
-    return html;
   };
 
   Handlebars.Binding.prototype.render = function() {
@@ -135,46 +144,39 @@
     }
   };
 
-  Handlebars.Binding.prototype.initializeAttribute = function() {
-    var attributeName = "binding-" + this.id;
-
-    Handlebars.registerAttribute(attributeName, function(element) {
-      if (this.options.hash.attr == true) {
-        this.attribute = document.createAttribute(this.value);
-        return this.attribute;
-      } else if (this.options.hash.attr == "class") {
-        this.attribute = element.attributes.class;
-        Utils.addClass(element, this.value);
-      } else {
-        this.attribute = document.createAttribute(this.options.hash.attr);
-        this.attribute.value = this.value;
-        return this.attribute;
-      }
-    }.bind(this), {
-      ready: function(element) {
-        this.setNode(element);
-        delete Handlebars.attributes[attributeName];
-      }.bind(this)
-    });
-
-    return this.createAttribute();
+  Handlebars.Binding.prototype.initializeAttribute = function(node) {
+    if (this.options.hash.attr == true) {
+      return document.createAttribute(this.value);
+    } else if (this.options.hash.attr == "class") {
+      Utils.addClass(node, this.value);
+      return node.attributes.class;
+    } else {
+      var attribute = document.createAttribute(this.options.hash.attr);
+      attribute.value = this.value;
+      return attribute;
+    }
   };
 
   Handlebars.Binding.prototype.initializeInline = function() {
     if (Utils.isString(this.value)) {
-      this.setNode(document.createTextNode(Utils.escapeExpression(new Handlebars.SafeString(this.output))));
+      return document.createTextNode(Utils.escapeExpression(new Handlebars.SafeString(this.output)));
     } else {
-      this.setNode(document.createTextNode(Utils.escapeExpression(this.output)));
+      return document.createTextNode(Utils.escapeExpression(this.output));
     }
-
-    Handlebars.store.hold(this.id, Utils.flatten([this.node]));
-    return new Handlebars.SafeString(this.createElement());
   };
 
   Handlebars.Binding.prototype.initializeBlock = function() {
-    this.nodes = Handlebars.parseHTML(this.output);
-    Handlebars.store.hold(this.id, Utils.flatten([this.marker, this.nodes, this.delimiter]));
-    return new Handlebars.SafeString(this.createElement());
+    return Handlebars.parseHTML(this.output);
+  };
+
+  Handlebars.Binding.prototype.observeContext = function(context) {
+    var observer = new ObjectObserver(this.context);
+
+    observer.open(function() {
+      Utils.extend(context, this.context);
+    }.bind(this));
+
+    return context;
   };
 
   Handlebars.Binding.prototype.observe = function() {
@@ -209,7 +211,6 @@
       if (this.options.hash.attr == true) {
         this.node.removeAttribute(this.previousOutput);
         this.node.setAttribute(this.output, '');
-        // if (this.output) this.node.setAttribute(this.output, ""); ===> conditional #if #unless
       } else if (this.options.hash.attr == "class") {
         Utils.removeClass(this.node, this.previousOutput);
         Utils.addClass(this.node, this.output);
@@ -223,21 +224,20 @@
         this.node.textContent = Utils.escapeExpression(this.output);
       }
     } else {
-      this.nodes = Handlebars.parseHTML(this.output);
       Utils.removeBetween(this.marker, this.delimiter);
-      Utils.insertAfter(this.marker, this.nodes);
+      Utils.insertAfter(this.marker, Handlebars.parseHTML(this.output));
     }
+  };
+
+  Handlebars.Binding.prototype.setNode = function(node) {
+    node.bindings = node.bindings || [];
+    node.bindings.push(this);
+    return this.node = node;
   };
 
   Handlebars.Binding.prototype.setOutput = function(output) {
     this.previousOutput = this.output;
-    this.output = output;
-  };
-
-  Handlebars.Binding.prototype.setNode = function(node) {
-    this.node = node;
-    this.node.bindings = this.node.bindings || [];
-    this.node.bindings.push(this);
+    return this.output = output;
   };
 
   Handlebars.Binding.prototype.createElement = function() {
@@ -255,30 +255,30 @@
 
   Handlebars.IfBinding.prototype = Object.create(Handlebars.Binding.prototype);
 
-  Handlebars.IfBinding.prototype.initializeAttribute = function() {
-    var attributeName = "binding-" + this.id;
-
-    Handlebars.registerAttribute(attributeName, function(element) {
-      if (this.options.hash.attr == true) {
-        if (this.output) this.attribute = document.createAttribute(this.output);
-        if (this.attribute) return this.attribute;
-      } else if (this.options.hash.attr == "class") {
-        this.attribute = element.attributes.class;
-        if (this.output) Utils.addClass(element, this.output);
-      } else {
-        this.attribute = document.createAttribute(this.options.hash.attr);
-        this.attribute.value = this.output;
-        return this.attribute;
-      }
-    }.bind(this), {
-      ready: function(element) {
-        this.setNode(element);
-        delete Handlebars.attributes[attributeName];
-      }.bind(this)
-    });
-
-    return this.createAttribute();
+  Handlebars.IfBinding.prototype.initializeAttribute = function(node) {
+    if (this.options.hash.attr == true) {
+      if (this.output) return document.createAttribute(this.output);
+    } else if (this.options.hash.attr == "class") {
+      if (this.output) Utils.addClass(node, this.output);
+      return node.attributes.class;
+    } else {
+      var attribute = document.createAttribute(this.options.hash.attr);
+      attribute.value = this.output;
+      return attribute;
+    }
   }
+
+  Handlebars.IfBinding.prototype.react = function() {
+    if (this.options.hash.attr) {
+      if (this.options.hash.attr == true) {
+        this.node.removeAttribute(this.previousOutput);
+        if (this.output) this.node.setAttribute(this.output, "");
+        return;
+      }
+    }
+
+    return Handlebars.Binding.prototype.react.apply(this, arguments);
+  };
 
   Handlebars.IfBinding.prototype.render = function() {
     if (this.falsy) {
@@ -388,24 +388,32 @@
       context = Utils.extend(context, item);
     }
 
-    return this.options.fn(context);
+    if (this.options.hash.bind) {
+      return this.options.fn(this.observeContext(context));
+    } else {
+      return this.options.fn(context);
+    }
   };
 
   Handlebars.EachBinding.prototype.initializeBlock = function() {
-    for (var index = 0; index < this.value.length; index++) {
-      var item = this.value[index];
-      var itemMarker = document.createTextNode("");
-      var itemDelimiter = document.createTextNode("");
-      var itemNode = Handlebars.parseHTML(this.renderItem(item, index));
+    if (this.empty) {
+      return Handlebars.parseHTML(this.output);
+    } else {
+      var nodes = [];
 
-      this.markers.push(itemMarker);
-      this.delimiters.push(itemDelimiter);
-      this.nodes.push(itemMarker, itemNode, itemDelimiter);
+      for (var index = 0; index < this.value.length; index++) {
+        var item = this.value[index];
+        var itemMarker = document.createTextNode("");
+        var itemDelimiter = document.createTextNode("");
+        var itemNode = Handlebars.parseHTML(this.renderItem(item, index));
+
+        this.markers.push(itemMarker);
+        this.delimiters.push(itemDelimiter);
+        nodes.push(itemMarker, itemNode, itemDelimiter);
+      }
+
+      return Utils.flatten(nodes);
     }
-
-    this.nodes = Utils.flatten(this.nodes);
-    Handlebars.store.hold(this.id, Utils.flatten([this.marker, (this.empty ? Handlebars.parseHTML(this.output) : this.nodes), this.delimiter]));
-    return new Handlebars.SafeString(this.createElement());
   };
 
   Handlebars.bind = function(root) {

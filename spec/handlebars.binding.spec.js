@@ -282,6 +282,20 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
           done();
         });
       });
+
+      it("should observe context", function(done) {
+        var context = {foo: [1, 2, 3], parent: 123};
+        var div = document.createElement("div");
+        var template = Handlebars.compile("<ul>{{#each foo var='bar' bind=true}}<li>{{bar}} - {{bind 'parent'}}</li>{{/each}}</ul>");
+        div.appendChild(Handlebars.parseHTML(template(context))[0]);
+        context.parent = 321;
+        Platform.performMicrotaskCheckpoint();
+
+        setTimeout(function() {
+          chai.expect(div.innerHTML).to.equal('<ul><li>1 - 321</li><li>2 - 321</li><li>3 - 321</li></ul>');
+          done();
+        });
+      });
     });
 
     describe("unbind/bind", function() {
