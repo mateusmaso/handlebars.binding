@@ -296,6 +296,22 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
           done();
         });
       });
+
+      it("should observe item context & index", function(done) {
+        var context = {foo: [{value: 1}, {value: 2}, {value: 3}]};
+        var div = document.createElement("div");
+        var template = Handlebars.compile("<ul>{{#each foo var='bar' bind=true}}<li>{{bind 'bar.value'}} - {{bind 'index'}}</li>{{/each}}</ul>");
+        div.appendChild(Handlebars.parseHTML(template(context))[0]);
+        context.foo[1].value = 5;
+        context.foo.push({value: 4});
+        context.foo.splice(0, 1);
+        Platform.performMicrotaskCheckpoint();
+
+        setTimeout(function() {
+          chai.expect(div.innerHTML).to.equal('<ul><li>5 - 0</li><li>3 - 1</li><li>4 - 2</li></ul>');
+          done();
+        });
+      });
     });
 
     describe("unbind/bind", function() {

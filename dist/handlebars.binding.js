@@ -1,8 +1,8 @@
 // handlebars.binding
 // ------------------
-// v0.1.7
+// v0.1.8
 //
-// Copyright (c) 2013-2015 Mateus Maso
+// Copyright (c) 2013-2016 Mateus Maso
 // Distributed under MIT license
 //
 // http://github.com/mateusmaso/handlebars.binding
@@ -167,16 +167,6 @@
 
   Handlebars.Binding.prototype.initializeBlock = function() {
     return Handlebars.parseHTML(this.output);
-  };
-
-  Handlebars.Binding.prototype.observeContext = function(context) {
-    var observer = new ObjectObserver(this.context);
-
-    observer.open(function() {
-      Utils.extend(context, this.context);
-    }.bind(this));
-
-    return context;
   };
 
   Handlebars.Binding.prototype.observe = function() {
@@ -389,10 +379,27 @@
     }
 
     if (this.options.hash.bind) {
-      return this.options.fn(this.observeContext(context));
-    } else {
+      var contextObserver = new ObjectObserver(this.context);
+      contextObserver.open(function() {
+        Utils.extend(context, this.context);
+      }.bind(this));
+
+      var indexObserver = new ArrayObserver(this.value);
+      indexObserver.open(function() {
+        var index = this.value.indexOf(item);
+
+        if (index == -1) {
+          delete context[this.options.hash.var];
+          delete context.index;
+        } else {
+          context.index = index;
+        }
+      }.bind(this));
+
       return this.options.fn(context);
     }
+
+    return this.options.fn(context);
   };
 
   Handlebars.EachBinding.prototype.initializeBlock = function() {

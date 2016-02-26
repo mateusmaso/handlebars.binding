@@ -160,16 +160,6 @@
     return Handlebars.parseHTML(this.output);
   };
 
-  Handlebars.Binding.prototype.observeContext = function(context) {
-    var observer = new ObjectObserver(this.context);
-
-    observer.open(function() {
-      Utils.extend(context, this.context);
-    }.bind(this));
-
-    return context;
-  };
-
   Handlebars.Binding.prototype.observe = function() {
     if (Utils.isArray(this.value)) {
       this.observer = new ArrayObserver(this.value);
@@ -380,10 +370,27 @@
     }
 
     if (this.options.hash.bind) {
-      return this.options.fn(this.observeContext(context));
-    } else {
+      var contextObserver = new ObjectObserver(this.context);
+      contextObserver.open(function() {
+        Utils.extend(context, this.context);
+      }.bind(this));
+
+      var indexObserver = new ArrayObserver(this.value);
+      indexObserver.open(function() {
+        var index = this.value.indexOf(item);
+
+        if (index == -1) {
+          delete context[this.options.hash.var];
+          delete context.index;
+        } else {
+          context.index = index;
+        }
+      }.bind(this));
+
       return this.options.fn(context);
     }
+
+    return this.options.fn(context);
   };
 
   Handlebars.EachBinding.prototype.initializeBlock = function() {
