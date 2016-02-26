@@ -1,6 +1,6 @@
 // handlebars.binding
 // ------------------
-// v0.1.8
+// v0.1.9
 //
 // Copyright (c) 2013-2016 Mateus Maso
 // Distributed under MIT license
@@ -395,6 +395,13 @@
           context.index = index;
         }
       }.bind(this));
+
+      if (!this.options.hash.var) {
+        var itemObserver = new ObjectObserver(item);
+        itemObserver.open(function() {
+          Utils.extend(context, item);
+        }.bind(this));
+      }
 
       return this.options.fn(context);
     }

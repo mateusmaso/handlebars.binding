@@ -387,6 +387,13 @@
         }
       }.bind(this));
 
+      if (!this.options.hash.var) {
+        var itemObserver = new ObjectObserver(item);
+        itemObserver.open(function() {
+          Utils.extend(context, item);
+        }.bind(this));
+      }
+
       return this.options.fn(context);
     }
 
