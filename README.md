@@ -83,9 +83,22 @@ Platform.performMicrotaskCheckpoint(); // older browsers support
 ### Each helper
 
 ```html
-{{#each collection var="item" bind=true}}
-  <h2>Item {{index}}: {{item}}</h2>
-  <p>{{item.content}}</p>
+{{#each objects var="object" bind=true}}
+  <h2>Item {{index}}: {{object.name}}</h2>
+  <p>{{object.content}}</p>
+{{/each}}
+
+{{#each objects bind=true}}
+  <h2>Item {{index}}: {{name}}</h2>
+  <p>{{content}}</p>
+{{/each}}
+
+{{#each primitives var="primitive" bind=true}}
+  <h2>Item {{index}}: {{primitive}}</h2>
+{{/each}}
+
+{{#each primitives bind=true}}
+  <h2>Item {{index}}: {{$this}}</h2>
 {{/each}}
 ```
 
@@ -98,4 +111,4 @@ Handlebars.bind(node);
 
 ## License
 
-Copyright (c) 2013-2014 Mateus Maso. Released under an MIT license.
+Copyright (c) 2013-2016 Mateus Maso. Released under an MIT license.

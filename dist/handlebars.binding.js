@@ -1,6 +1,6 @@
 // handlebars.binding
 // ------------------
-// v0.1.9
+// v0.2.0
 //
 // Copyright (c) 2013-2016 Mateus Maso
 // Distributed under MIT license
@@ -129,9 +129,10 @@
       Handlebars.store.hold(this.id, Utils.flatten([this.node]));
       return new Handlebars.SafeString(this.createElement());
     } else {
+      var nodes = this.initializeBlock();
       this.observe();
       this.marker.binding = this;
-      Handlebars.store.hold(this.id, Utils.flatten([this.marker, this.initializeBlock(), this.delimiter]));
+      Handlebars.store.hold(this.id, Utils.flatten([this.marker, nodes, this.delimiter]));
       return new Handlebars.SafeString(this.createElement());
     }
   };
@@ -310,13 +311,47 @@
 
   Handlebars.EachBinding.prototype = Object.create(Handlebars.Binding.prototype);
 
+  Handlebars.EachBinding.prototype.observeItem = function(item, marker) {
+    var itemContext = marker.context;
+    var itemObserver;
+
+    if (Utils.isObject(item)) {
+      if (!this.options.hash.var) {
+        itemObserver = new ObjectObserver(item);
+        itemObserver.open(function() {
+          Utils.extend(itemContext, item);
+        }.bind(this));
+      }
+    } else {
+      itemObserver = new ArrayObserver(this.value);
+      itemObserver.open(function() {
+        item = this.value[itemContext.index];
+        itemContext["$this"] = item;
+        if (this.options.hash.var) itemContext[this.options.hash.var] = item;
+      }.bind(this));
+    }
+
+    var contextObserver = new ObjectObserver(this.context);
+    contextObserver.open(function() {
+      Utils.extend(itemContext, this.context);
+    }.bind(this));
+  };
+
   Handlebars.EachBinding.prototype.observe = function() {
     this.observer = new ArrayObserver(this.value);
     this.observer.open(function(splices) {
       for (var index = 0; index < splices.length; index++) {
         this.react(splices[index]);
       }
+
+      for (var index = 0; index < this.value.length; index++) {
+        this.markers[index].context.index = index;
+      }
     }.bind(this));
+
+    for (var index = 0; index < this.value.length; index++) {
+      this.observeItem(this.value[index], this.markers[index]);
+    }
   };
 
   Handlebars.EachBinding.prototype.react = function(splice) {
@@ -332,15 +367,14 @@
     }
 
     if (splice.removed.length > 0) {
+      var removedCount = 0
       for (var index = splice.index; index < (splice.index + splice.removed.length); index++) {
-        Utils.removeBetween(this.markers[index], this.delimiters[index]);
-        this.markers[index].remove();
-        this.delimiters[index].remove();
-      }
-
-      for (var index = splice.index; index < (splice.index + splice.removed.length); index++) {
-        this.markers.splice(index, 1);
-        this.delimiters.splice(index, 1);
+        var updatedIndex = index - removedCount++;
+        Utils.removeBetween(this.markers[updatedIndex], this.delimiters[updatedIndex]);
+        this.markers[updatedIndex].remove();
+        this.delimiters[updatedIndex].remove();
+        this.markers.splice(updatedIndex, 1);
+        this.delimiters.splice(updatedIndex, 1);
       }
     }
 
@@ -349,12 +383,13 @@
         var item = this.value[index];
         var itemMarker = document.createTextNode("");
         var itemDelimiter = document.createTextNode("");
-        var itemNode = Handlebars.parseHTML(this.renderItem(item, index));
+        var itemNode = Handlebars.parseHTML(this.renderItem(item, index, itemMarker));
         var previous = this.delimiters[index - 1] || this.marker;
 
         Utils.insertAfter(previous, Utils.flatten([itemMarker, itemNode, itemDelimiter]))
         this.markers.splice(index, 0, itemMarker);
         this.delimiters.splice(index, 0, itemDelimiter);
+        this.observeItem(item, itemMarker);
       }
     }
   };
@@ -369,44 +404,20 @@
     this.setOutput(this.value.length ? output : this.options.inverse(this.context));
   };
 
-  Handlebars.EachBinding.prototype.renderItem = function(item, index) {
-    var context = Utils.extend({index: index}, this.context);
+  Handlebars.EachBinding.prototype.renderItem = function(item, index, marker) {
+    var itemContext = Utils.extend({index: index, "$this": item}, this.context);
 
     if (this.options.hash.var) {
-      context[this.options.hash.var] = item;
-    } else {
-      context = Utils.extend(context, item);
+      itemContext[this.options.hash.var] = item;
+    } else if (Utils.isObject(item)) {
+      Utils.extend(itemContext, item);
     }
 
-    if (this.options.hash.bind) {
-      var contextObserver = new ObjectObserver(this.context);
-      contextObserver.open(function() {
-        Utils.extend(context, this.context);
-      }.bind(this));
-
-      var indexObserver = new ArrayObserver(this.value);
-      indexObserver.open(function() {
-        var index = this.value.indexOf(item);
-
-        if (index == -1) {
-          delete context[this.options.hash.var];
-          delete context.index;
-        } else {
-          context.index = index;
-        }
-      }.bind(this));
-
-      if (!this.options.hash.var) {
-        var itemObserver = new ObjectObserver(item);
-        itemObserver.open(function() {
-          Utils.extend(context, item);
-        }.bind(this));
-      }
-
-      return this.options.fn(context);
+    if (marker != null) {
+      marker.context = itemContext;
     }
 
-    return this.options.fn(context);
+    return this.options.fn(itemContext);
   };
 
   Handlebars.EachBinding.prototype.initializeBlock = function() {
@@ -419,7 +430,7 @@
         var item = this.value[index];
         var itemMarker = document.createTextNode("");
         var itemDelimiter = document.createTextNode("");
-        var itemNode = Handlebars.parseHTML(this.renderItem(item, index));
+        var itemNode = Handlebars.parseHTML(this.renderItem(item, index, itemMarker));
 
         this.markers.push(itemMarker);
         this.delimiters.push(itemDelimiter);

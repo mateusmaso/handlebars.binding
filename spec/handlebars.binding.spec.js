@@ -255,77 +255,263 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
     });
 
     describe("each helper", function() {
-      it("should append item", function(done) {
-        var context = {foo: [1, 2, 3]};
-        var div = document.createElement("div");
-        var template = Handlebars.compile("<ul>{{#each foo var='bar' bind=true}}<li>{{bar}}</li>{{/each}}</ul>");
-        div.appendChild(Handlebars.parseHTML(template(context))[0]);
-        context.foo.push(4);
-        Platform.performMicrotaskCheckpoint();
+      describe("objects", function() {
+        describe("with var", function() {
+          it("should append item", function(done) {
+            var context = {foo: [{value: 1}, {value: 2}, {value: 3}]};
+            var div = document.createElement("div");
+            var template = Handlebars.compile("<ul>{{#each foo var='bar' bind=true}}<li>{{bar.value}}</li>{{/each}}</ul>");
+            div.appendChild(Handlebars.parseHTML(template(context))[0]);
+            context.foo.push({value: 4});
+            Platform.performMicrotaskCheckpoint();
 
-        setTimeout(function() {
-          chai.expect(div.innerHTML).to.equal('<ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>');
-          done();
+            setTimeout(function() {
+              chai.expect(div.innerHTML).to.equal('<ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>');
+              done();
+            });
+          });
+
+          it("should remove item", function(done) {
+            var context = {foo: [{value: 1}, {value: 2}, {value: 3}]};
+            var div = document.createElement("div");
+            var template = Handlebars.compile("<ul>{{#each foo var='bar' bind=true}}<li>{{bar.value}}</li>{{/each}}</ul>");
+            div.appendChild(Handlebars.parseHTML(template(context))[0]);
+            context.foo.pop();
+            Platform.performMicrotaskCheckpoint();
+
+            setTimeout(function() {
+              chai.expect(div.innerHTML).to.equal('<ul><li>1</li><li>2</li></ul>');
+              done();
+            });
+          });
+
+          it("should observe parent context", function(done) {
+            var context = {foo: [{value: 1}, {value: 2}, {value: 3}], parent: 123};
+            var div = document.createElement("div");
+            var template = Handlebars.compile("<ul>{{#each foo var='bar' bind=true}}<li>{{bar.value}} - {{bind 'parent'}}</li>{{/each}}</ul>");
+            div.appendChild(Handlebars.parseHTML(template(context))[0]);
+            context.parent = 321;
+            Platform.performMicrotaskCheckpoint();
+
+            setTimeout(function() {
+              chai.expect(div.innerHTML).to.equal('<ul><li>1 - 321</li><li>2 - 321</li><li>3 - 321</li></ul>');
+              done();
+            });
+          });
+
+          it("should update context & index", function(done) {
+            var context = {foo: [{value: 1}, {value: 2}, {value: 3}]};
+            var div = document.createElement("div");
+            var template = Handlebars.compile("<ul>{{#each foo var='bar' bind=true}}<li>{{bind 'bar.value'}} - {{bind 'index'}}</li>{{/each}}</ul>");
+            div.appendChild(Handlebars.parseHTML(template(context))[0]);
+            context.foo[1].value = 5;
+            context.foo.push({value: 4});
+            context.foo.splice(0, 1);
+            Platform.performMicrotaskCheckpoint();
+
+            setTimeout(function() {
+              chai.expect(div.innerHTML).to.equal('<ul><li>5 - 0</li><li>3 - 1</li><li>4 - 2</li></ul>');
+              done();
+            });
+          });
+        });
+
+        describe("without var", function() {
+          it("should append item", function(done) {
+            var context = {foo: [{value: 1}, {value: 2}, {value: 3}]};
+            var div = document.createElement("div");
+            var template = Handlebars.compile("<ul>{{#each foo bind=true}}<li>{{value}}</li>{{/each}}</ul>");
+            div.appendChild(Handlebars.parseHTML(template(context))[0]);
+            context.foo.push({value: 4});
+            Platform.performMicrotaskCheckpoint();
+
+            setTimeout(function() {
+              chai.expect(div.innerHTML).to.equal('<ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>');
+              done();
+            });
+          });
+
+          it("should remove item", function(done) {
+            var context = {foo: [{value: 1}, {value: 2}, {value: 3}]};
+            var div = document.createElement("div");
+            var template = Handlebars.compile("<ul>{{#each foo bind=true}}<li>{{value}}</li>{{/each}}</ul>");
+            div.appendChild(Handlebars.parseHTML(template(context))[0]);
+            context.foo.pop();
+            Platform.performMicrotaskCheckpoint();
+
+            setTimeout(function() {
+              chai.expect(div.innerHTML).to.equal('<ul><li>1</li><li>2</li></ul>');
+              done();
+            });
+          });
+
+          it("should observe parent context", function(done) {
+            var context = {foo: [{value: 1}, {value: 2}, {value: 3}], parent: 123};
+            var div = document.createElement("div");
+            var template = Handlebars.compile("<ul>{{#each foo bind=true}}<li>{{value}} - {{bind 'parent'}}</li>{{/each}}</ul>");
+            div.appendChild(Handlebars.parseHTML(template(context))[0]);
+            context.parent = 321;
+            Platform.performMicrotaskCheckpoint();
+
+            setTimeout(function() {
+              chai.expect(div.innerHTML).to.equal('<ul><li>1 - 321</li><li>2 - 321</li><li>3 - 321</li></ul>');
+              done();
+            });
+          });
+
+          it("should update context & index", function(done) {
+            var context = {foo: [{value: 1}, {value: 2}, {value: 3}]};
+            var div = document.createElement("div");
+            var template = Handlebars.compile("<ul>{{#each foo bind=true}}<li>{{bind 'value'}} - {{bind 'index'}}</li>{{/each}}</ul>");
+            div.appendChild(Handlebars.parseHTML(template(context))[0]);
+            context.foo[1].value = 5;
+            context.foo.push({value: 4});
+            context.foo.splice(0, 1);
+            Platform.performMicrotaskCheckpoint();
+
+            setTimeout(function() {
+              chai.expect(div.innerHTML).to.equal('<ul><li>5 - 0</li><li>3 - 1</li><li>4 - 2</li></ul>');
+              done();
+            });
+          });
         });
       });
 
-      it("should remove item", function(done) {
-        var context = {foo: [1, 2, 3]};
-        var div = document.createElement("div");
-        var template = Handlebars.compile("<ul>{{#each foo var='bar' bind=true}}<li>{{bar}}</li>{{/each}}</ul>");
-        div.appendChild(Handlebars.parseHTML(template(context))[0]);
-        context.foo.pop();
-        Platform.performMicrotaskCheckpoint();
+      describe("primitives", function() {
+        describe("with var", function() {
+          it("should append item", function(done) {
+            var context = {foo: [1, 2, 3]};
+            var div = document.createElement("div");
+            var template = Handlebars.compile("<ul>{{#each foo var='bar' bind=true}}<li>{{bar}}</li>{{/each}}</ul>");
+            div.appendChild(Handlebars.parseHTML(template(context))[0]);
+            context.foo.push(4);
+            Platform.performMicrotaskCheckpoint();
 
-        setTimeout(function() {
-          chai.expect(div.innerHTML).to.equal('<ul><li>1</li><li>2</li></ul>');
-          done();
+            setTimeout(function() {
+              chai.expect(div.innerHTML).to.equal('<ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>');
+              done();
+            });
+          });
+
+          it("should remove item", function(done) {
+            var context = {foo: [1, 2, 3]};
+            var div = document.createElement("div");
+            var template = Handlebars.compile("<ul>{{#each foo var='bar' bind=true}}<li>{{bar}}</li>{{/each}}</ul>");
+            div.appendChild(Handlebars.parseHTML(template(context))[0]);
+            context.foo.pop();
+            Platform.performMicrotaskCheckpoint();
+
+            setTimeout(function() {
+              chai.expect(div.innerHTML).to.equal('<ul><li>1</li><li>2</li></ul>');
+              done();
+            });
+          });
+
+          it("should observe parent context", function(done) {
+            var context = {foo: [1, 2, 3], parent: 123};
+            var div = document.createElement("div");
+            var template = Handlebars.compile("<ul>{{#each foo var='bar' bind=true}}<li>{{bar}} - {{bind 'parent'}}</li>{{/each}}</ul>");
+            div.appendChild(Handlebars.parseHTML(template(context))[0]);
+            context.parent = 321;
+            Platform.performMicrotaskCheckpoint();
+
+            setTimeout(function() {
+              chai.expect(div.innerHTML).to.equal('<ul><li>1 - 321</li><li>2 - 321</li><li>3 - 321</li></ul>');
+              done();
+            });
+          });
+
+          it("should update context & index", function(done) {
+            var context = {foo: [1, 2, 3]};
+            var div = document.createElement("div");
+            var template = Handlebars.compile("<ul>{{#each foo var='bar' bind=true}}<li>{{bind 'bar'}} - {{bind 'index'}}</li>{{/each}}</ul>");
+            div.appendChild(Handlebars.parseHTML(template(context))[0]);
+            context.foo[1] = 5; // [1, 5, 3]
+            context.foo.push(4); // [1, 5, 3, 4]
+            context.foo.splice(0, 1); // [5, 3, 4]
+            Platform.performMicrotaskCheckpoint();
+
+            setTimeout(function() {
+              chai.expect(div.innerHTML).to.equal('<ul><li>5 - 0</li><li>3 - 1</li><li>4 - 2</li></ul>');
+              done();
+            });
+          });
+
+          it("should pass exhaustive test", function(done) {
+            var context = {foo: [1, 2, 3, 4, 5]};
+            var div = document.createElement("div");
+            var template = Handlebars.compile("<ul>{{#each foo var='bar' bind=true}}<li>{{bind 'bar'}} - {{bind 'index'}}</li>{{/each}}</ul>");
+            div.appendChild(Handlebars.parseHTML(template(context))[0]);
+            context.foo.splice(2, 1);
+            context.foo.splice(2, 1);
+            context.foo.splice(2, 1);
+            Platform.performMicrotaskCheckpoint();
+
+            setTimeout(function() {
+              chai.expect(div.innerHTML).to.equal('<ul><li>1 - 0</li><li>2 - 1</li></ul>');
+              done();
+            });
+          });
         });
-      });
 
-      it("should observe context", function(done) {
-        var context = {foo: [1, 2, 3], parent: 123};
-        var div = document.createElement("div");
-        var template = Handlebars.compile("<ul>{{#each foo var='bar' bind=true}}<li>{{bar}} - {{bind 'parent'}}</li>{{/each}}</ul>");
-        div.appendChild(Handlebars.parseHTML(template(context))[0]);
-        context.parent = 321;
-        Platform.performMicrotaskCheckpoint();
+        describe("without var", function() {
+          it("should append item", function(done) {
+            var context = {foo: [1, 2, 3]};
+            var div = document.createElement("div");
+            var template = Handlebars.compile("<ul>{{#each foo bind=true}}<li>{{$this}}</li>{{/each}}</ul>");
+            div.appendChild(Handlebars.parseHTML(template(context))[0]);
+            context.foo.push(4);
+            Platform.performMicrotaskCheckpoint();
 
-        setTimeout(function() {
-          chai.expect(div.innerHTML).to.equal('<ul><li>1 - 321</li><li>2 - 321</li><li>3 - 321</li></ul>');
-          done();
-        });
-      });
+            setTimeout(function() {
+              chai.expect(div.innerHTML).to.equal('<ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>');
+              done();
+            });
+          });
 
-      it("should observe item context & index (with alias)", function(done) {
-        var context = {foo: [{value: 1}, {value: 2}, {value: 3}]};
-        var div = document.createElement("div");
-        var template = Handlebars.compile("<ul>{{#each foo var='bar' bind=true}}<li>{{bind 'bar.value'}} - {{bind 'index'}}</li>{{/each}}</ul>");
-        div.appendChild(Handlebars.parseHTML(template(context))[0]);
-        context.foo[1].value = 5;
-        context.foo.push({value: 4});
-        context.foo.splice(0, 1);
-        Platform.performMicrotaskCheckpoint();
+          it("should remove item", function(done) {
+            var context = {foo: [1, 2, 3]};
+            var div = document.createElement("div");
+            var template = Handlebars.compile("<ul>{{#each foo bind=true}}<li>{{$this}}</li>{{/each}}</ul>");
+            div.appendChild(Handlebars.parseHTML(template(context))[0]);
+            context.foo.pop();
+            Platform.performMicrotaskCheckpoint();
 
-        setTimeout(function() {
-          chai.expect(div.innerHTML).to.equal('<ul><li>5 - 0</li><li>3 - 1</li><li>4 - 2</li></ul>');
-          done();
-        });
-      });
+            setTimeout(function() {
+              chai.expect(div.innerHTML).to.equal('<ul><li>1</li><li>2</li></ul>');
+              done();
+            });
+          });
 
-      it("should observe item context & index (without alias)", function(done) {
-        var context = {foo: [{value: 1}, {value: 2}, {value: 3}]};
-        var div = document.createElement("div");
-        var template = Handlebars.compile("<ul>{{#each foo bind=true}}<li>{{bind 'value'}} - {{bind 'index'}}</li>{{/each}}</ul>");
-        div.appendChild(Handlebars.parseHTML(template(context))[0]);
-        context.foo[1].value = 5;
-        context.foo.push({value: 4});
-        context.foo.splice(0, 1);
-        Platform.performMicrotaskCheckpoint();
+          it("should observe parent context", function(done) {
+            var context = {foo: [1, 2, 3], parent: 123};
+            var div = document.createElement("div");
+            var template = Handlebars.compile("<ul>{{#each foo bind=true}}<li>{{$this}} - {{bind 'parent'}}</li>{{/each}}</ul>");
+            div.appendChild(Handlebars.parseHTML(template(context))[0]);
+            context.parent = 321;
+            Platform.performMicrotaskCheckpoint();
 
-        setTimeout(function() {
-          chai.expect(div.innerHTML).to.equal('<ul><li>5 - 0</li><li>3 - 1</li><li>4 - 2</li></ul>');
-          done();
+            setTimeout(function() {
+              chai.expect(div.innerHTML).to.equal('<ul><li>1 - 321</li><li>2 - 321</li><li>3 - 321</li></ul>');
+              done();
+            });
+          });
+
+          it("should update context & index", function(done) {
+            var context = {foo: [1, 2, 3]};
+            var div = document.createElement("div");
+            var template = Handlebars.compile("<ul>{{#each foo bind=true}}<li>{{bind '$this'}} - {{bind 'index'}}</li>{{/each}}</ul>");
+            div.appendChild(Handlebars.parseHTML(template(context))[0]);
+            context.foo[1] = 5; // [1, 5, 3]
+            context.foo.push(4); // [1, 5, 3, 4]
+            context.foo.splice(0, 1); // [5, 3, 4]
+            Platform.performMicrotaskCheckpoint();
+
+            setTimeout(function() {
+              chai.expect(div.innerHTML).to.equal('<ul><li>5 - 0</li><li>3 - 1</li><li>4 - 2</li></ul>');
+              done();
+            });
+          });
         });
       });
     });
