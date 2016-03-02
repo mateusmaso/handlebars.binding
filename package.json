@@ -1,26 +1,36 @@
 {
   "name": "handlebars.binding",
   "description": "Handlebars plugin for one-way data binding",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": "mateusmaso",
-  "keywords": ["handlebars", "javascript", "data", "binding"],
+  "keywords": [
+    "handlebars",
+    "javascript",
+    "data",
+    "binding"
+  ],
   "devDependencies": {
+    "babel-preset-es2015": "^6.5.0",
+    "babelify": "^7.2.0",
     "chai": "*",
-    "mocha": "*",
-    "observe-js": "~0.4.0",
+    "grunt": "~0.4.5",
+    "grunt-babel": "^6.0.0",
+    "grunt-browserify": "~4.0.1",
+    "grunt-contrib-uglify": "~0.5.0",
+    "grunt-mocha": "~0.4.0",
     "handlebars": "~1.1.0",
     "handlebars.element": "~0.1.1",
-    "grunt": "~0.4.5",
-    "grunt-mocha": "~0.4.0",
-    "grunt-contrib-concat": "~0.5.0",
-    "grunt-contrib-uglify": "~0.5.0"
+    "mocha": "*",
+    "observe-js": "~0.4.0"
   },
-  "licenses": [{
-    "type": "MIT",
-    "url": "https://github.com/mateusmaso/handlebars.binding/blob/master/LICENSE.txt"
-  }],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/mateusmaso/handlebars.binding/blob/master/LICENSE.txt"
+    }
+  ],
   "repository": {
-    "type" : "git",
+    "type": "git",
     "url": "http://github.com/mateusmaso/handlebars.binding"
   },
   "dependencies": {

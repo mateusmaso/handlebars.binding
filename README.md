@@ -37,7 +37,7 @@ var nodes = Handlebars.parseHTML(template(context));
 
 context.foo = 321;
 
-Platform.performMicrotaskCheckpoint(); // older browsers support
+Platform.performMicrotaskCheckpoint(); // for older browsers support (optional)
 ```
 
 ## Examples
