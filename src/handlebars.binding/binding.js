@@ -163,6 +163,8 @@ export default class Binding {
   }
 
   stopObserving() {
-    this.observer.close();
+    if (this.observer) {
+      this.observer.close();
+    }
   }
 }

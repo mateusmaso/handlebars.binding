@@ -25,6 +25,10 @@ export function unbind(root) {
   });
 };
 
+export function update() {
+  Platform.performMicrotaskCheckpoint();
+};
+
 export function register() {
   Handlebars.registerHelper('bind', function(keypath, options) {
     return new Binding(this, keypath, null, options).initialize();

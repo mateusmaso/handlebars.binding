@@ -1,6 +1,6 @@
 // handlebars.binding
 // ------------------
-// v0.3.0
+// v0.3.1
 //
 // Copyright (c) 2013-2016 Mateus Maso
 // Distributed under MIT license
@@ -42,7 +42,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   var extend = Handlebars.Utils.extend;
 
 
-  extend(Handlebars, { Binding: _binding2.default, IfBinding: _if_binding2.default, EachBinding: _each_binding2.default, bind: _core.bind, unbind: _core.unbind });
+  extend(Handlebars, { Binding: _binding2.default, IfBinding: _if_binding2.default, EachBinding: _each_binding2.default, bind: _core.bind, unbind: _core.unbind, update: _core.update });
   extend(Handlebars.Utils, { path: _utils.path, traverse: _utils.traverse, removeBetween: _utils.removeBetween, nodesBetween: _utils.nodesBetween, removeClass: _utils.removeClass, addClass: _utils.addClass, hasClass: _utils.hasClass, isFalsy: _utils.isFalsy });
 
   (0, _core.register)();
@@ -275,7 +275,9 @@ var Binding = function () {
   }, {
     key: "stopObserving",
     value: function stopObserving() {
-      this.observer.close();
+      if (this.observer) {
+        this.observer.close();
+      }
     }
   }]);
 
@@ -292,6 +294,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.bind = bind;
 exports.unbind = unbind;
+exports.update = update;
 exports.register = register;
 
 var _utils = require("./utils");
@@ -335,6 +338,10 @@ function unbind(root) {
       });
     }
   });
+};
+
+function update() {
+  Platform.performMicrotaskCheckpoint();
 };
 
 function register() {
@@ -541,8 +548,8 @@ var EachBinding = function (_Binding2) {
         }
 
         if (splice.addedCount > 0) {
-          for (var index = splice.index; index < splice.index + splice.addedCount; index++) {
-            this.addItem(index);
+          for (var _index = splice.index; _index < splice.index + splice.addedCount; _index++) {
+            this.addItem(_index);
           }
         }
       } else {

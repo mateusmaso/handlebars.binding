@@ -15,6 +15,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             var template = Handlebars.compile("{{bind 'foo'}}");
             var node = Handlebars.parseHTML(template(context))[0];
             context.foo = 321;
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(node.textContent).to.equal("321");
@@ -38,6 +39,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             var template = Handlebars.compile("{{#bind 'foo'}}{{foo}}{{/bind}}");
             var marker = Handlebars.parseHTML(template(context))[0];
             context.foo = 321;
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(marker.nextSibling.textContent).to.equal("321");
@@ -59,6 +61,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             var template = Handlebars.compile("{{#bind 'foo'}}{{foo.bar}}{{/bind}}");
             var marker = Handlebars.parseHTML(template(context))[0];
             context.foo.bar = 321;
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(marker.nextSibling.textContent).to.equal("321");
@@ -80,6 +83,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             var template = Handlebars.compile("{{#bind 'foo'}}{{foo.[0]}}{{/bind}}");
             var marker = Handlebars.parseHTML(template(context))[0];
             context.foo.unshift(0);
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(marker.nextSibling.textContent).to.equal("0");
@@ -106,6 +110,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
               var template = Handlebars.compile("<div {{bind 'foo' attr=true}}></div>");
               div.appendChild(Handlebars.parseHTML(template(context))[0]);
               context.foo = "world";
+              Handlebars.update();
 
               setTimeout(function() {
                 chai.expect(div.innerHTML).to.equal('<div world=""></div>');
@@ -129,6 +134,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
               var template = Handlebars.compile("<div {{bind 'foo' attr='bar'}}></div>");
               div.appendChild(Handlebars.parseHTML(template(context))[0]);
               context.foo = "world";
+              Handlebars.update();
 
               setTimeout(function() {
                 chai.expect(div.innerHTML).to.equal('<div bar="world"></div>');
@@ -152,6 +158,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
               var template = Handlebars.compile("<div {{bind 'foo' attr='class'}}></div>");
               div.appendChild(Handlebars.parseHTML(template(context))[0]);
               context.foo = "world";
+              Handlebars.update();
 
               setTimeout(function() {
                 chai.expect(div.innerHTML).to.equal('<div class="world"></div>');
@@ -178,6 +185,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             var template = Handlebars.compile("{{if 'foo' bind=true then='hello' else='world'}}");
             var node = Handlebars.parseHTML(template(context))[0];
             context.foo = false;
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(node.textContent).to.equal("world");
@@ -201,6 +209,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             var template = Handlebars.compile("{{#if 'foo' bind=true}}hello{{else}}world{{/if}}");
             var marker = Handlebars.parseHTML(template(context))[0];
             context.foo = false;
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(marker.nextSibling.textContent).to.equal("world");
@@ -227,6 +236,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
               var template = Handlebars.compile("<div {{if 'foo' bindAttr=true then='hello' else='world'}}></div>");
               div.appendChild(Handlebars.parseHTML(template(context))[0]);
               context.foo = false;
+              Handlebars.update();
 
               setTimeout(function() {
                 chai.expect(div.innerHTML).to.equal('<div world=""></div>');
@@ -250,6 +260,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
               var template = Handlebars.compile("<div {{if 'foo' bindAttr='bar' then='hello' else='world'}}></div>");
               div.appendChild(Handlebars.parseHTML(template(context))[0]);
               context.foo = false;
+              Handlebars.update();
 
               setTimeout(function() {
                 chai.expect(div.innerHTML).to.equal('<div bar="world"></div>');
@@ -273,6 +284,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
               var template = Handlebars.compile("<div {{if 'foo' bindAttr='class' then='hello' else='world'}}></div>");
               div.appendChild(Handlebars.parseHTML(template(context))[0]);
               context.foo = false;
+              Handlebars.update();
 
               setTimeout(function() {
                 chai.expect(div.innerHTML).to.equal('<div class="world"></div>');
@@ -292,6 +304,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             var template = Handlebars.compile("{{unless 'foo' bind=true then='hello' else='world'}}");
             var node = Handlebars.parseHTML(template(context))[0];
             context.foo = false;
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(node.textContent).to.equal("hello");
@@ -315,6 +328,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             var template = Handlebars.compile("{{#unless 'foo' bind=true}}hello{{else}}world{{/unless}}");
             var marker = Handlebars.parseHTML(template(context))[0];
             context.foo = false;
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(marker.nextSibling.textContent).to.equal("hello");
@@ -341,6 +355,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
               var template = Handlebars.compile("<div {{unless 'foo' bindAttr=true then='hello' else='world'}}></div>");
               div.appendChild(Handlebars.parseHTML(template(context))[0]);
               context.foo = false;
+              Handlebars.update();
 
               setTimeout(function() {
                 chai.expect(div.innerHTML).to.equal('<div hello=""></div>');
@@ -364,6 +379,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
               var template = Handlebars.compile("<div {{unless 'foo' bindAttr='bar' then='hello' else='world'}}></div>");
               div.appendChild(Handlebars.parseHTML(template(context))[0]);
               context.foo = false;
+              Handlebars.update();
 
               setTimeout(function() {
                 chai.expect(div.innerHTML).to.equal('<div bar="hello"></div>');
@@ -387,6 +403,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
               var template = Handlebars.compile("<div {{unless 'foo' bindAttr='class' then='hello' else='world'}}></div>");
               div.appendChild(Handlebars.parseHTML(template(context))[0]);
               context.foo = false;
+              Handlebars.update();
 
               setTimeout(function() {
                 chai.expect(div.innerHTML).to.equal('<div class="hello"></div>');
@@ -407,6 +424,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             var template = Handlebars.compile("<ul>{{#each foo var='bar' bind=true}}<li>{{bar.value}}</li>{{/each}}</ul>");
             div.appendChild(Handlebars.parseHTML(template(context))[0]);
             context.foo.push({value: 4});
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(div.innerHTML).to.equal('<ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>');
@@ -420,6 +438,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             var template = Handlebars.compile("<ul>{{#each foo var='bar' bind=true}}<li>{{bar.value}}</li>{{/each}}</ul>");
             div.appendChild(Handlebars.parseHTML(template(context))[0]);
             context.foo.pop();
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(div.innerHTML).to.equal('<ul><li>1</li><li>2</li></ul>');
@@ -433,6 +452,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             var template = Handlebars.compile("<ul>{{#each foo var='bar' bind=true}}<li>{{bar.value}} - {{bind 'parent'}}</li>{{/each}}</ul>");
             div.appendChild(Handlebars.parseHTML(template(context))[0]);
             context.parent = 321;
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(div.innerHTML).to.equal('<ul><li>1 - 321</li><li>2 - 321</li><li>3 - 321</li></ul>');
@@ -448,6 +468,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             context.foo[1].value = 5;
             context.foo.push({value: 4});
             context.foo.splice(0, 1);
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(div.innerHTML).to.equal('<ul><li>5 - 0</li><li>3 - 1</li><li>4 - 2</li></ul>');
@@ -463,6 +484,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             var template = Handlebars.compile("<ul>{{#each foo bind=true}}<li>{{value}}</li>{{/each}}</ul>");
             div.appendChild(Handlebars.parseHTML(template(context))[0]);
             context.foo.push({value: 4});
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(div.innerHTML).to.equal('<ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>');
@@ -476,6 +498,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             var template = Handlebars.compile("<ul>{{#each foo bind=true}}<li>{{value}}</li>{{/each}}</ul>");
             div.appendChild(Handlebars.parseHTML(template(context))[0]);
             context.foo.pop();
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(div.innerHTML).to.equal('<ul><li>1</li><li>2</li></ul>');
@@ -489,6 +512,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             var template = Handlebars.compile("<ul>{{#each foo bind=true}}<li>{{value}} - {{bind 'parent'}}</li>{{/each}}</ul>");
             div.appendChild(Handlebars.parseHTML(template(context))[0]);
             context.parent = 321;
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(div.innerHTML).to.equal('<ul><li>1 - 321</li><li>2 - 321</li><li>3 - 321</li></ul>');
@@ -504,6 +528,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             context.foo[1].value = 5;
             context.foo.push({value: 4});
             context.foo.splice(0, 1);
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(div.innerHTML).to.equal('<ul><li>5 - 0</li><li>3 - 1</li><li>4 - 2</li></ul>');
@@ -521,6 +546,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             var template = Handlebars.compile("<ul>{{#each foo var='bar' bind=true}}<li>{{bar}}</li>{{/each}}</ul>");
             div.appendChild(Handlebars.parseHTML(template(context))[0]);
             context.foo.push(4);
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(div.innerHTML).to.equal('<ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>');
@@ -534,6 +560,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             var template = Handlebars.compile("<ul>{{#each foo var='bar' bind=true}}<li>{{bar}}</li>{{/each}}</ul>");
             div.appendChild(Handlebars.parseHTML(template(context))[0]);
             context.foo.pop();
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(div.innerHTML).to.equal('<ul><li>1</li><li>2</li></ul>');
@@ -547,6 +574,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             var template = Handlebars.compile("<ul>{{#each foo var='bar' bind=true}}<li>{{bar}} - {{bind 'parent'}}</li>{{/each}}</ul>");
             div.appendChild(Handlebars.parseHTML(template(context))[0]);
             context.parent = 321;
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(div.innerHTML).to.equal('<ul><li>1 - 321</li><li>2 - 321</li><li>3 - 321</li></ul>');
@@ -562,6 +590,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             context.foo[1] = 5; // [1, 5, 3]
             context.foo.push(4); // [1, 5, 3, 4]
             context.foo.splice(0, 1); // [5, 3, 4]
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(div.innerHTML).to.equal('<ul><li>5 - 0</li><li>3 - 1</li><li>4 - 2</li></ul>');
@@ -577,6 +606,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             context.foo.splice(2, 1);
             context.foo.splice(2, 1);
             context.foo.splice(2, 1);
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(div.innerHTML).to.equal('<ul><li>1 - 0</li><li>2 - 1</li></ul>');
@@ -592,6 +622,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             var template = Handlebars.compile("<ul>{{#each foo bind=true}}<li>{{$this}}</li>{{/each}}</ul>");
             div.appendChild(Handlebars.parseHTML(template(context))[0]);
             context.foo.push(4);
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(div.innerHTML).to.equal('<ul><li>1</li><li>2</li><li>3</li><li>4</li></ul>');
@@ -605,6 +636,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             var template = Handlebars.compile("<ul>{{#each foo bind=true}}<li>{{$this}}</li>{{/each}}</ul>");
             div.appendChild(Handlebars.parseHTML(template(context))[0]);
             context.foo.pop();
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(div.innerHTML).to.equal('<ul><li>1</li><li>2</li></ul>');
@@ -618,6 +650,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             var template = Handlebars.compile("<ul>{{#each foo bind=true}}<li>{{$this}} - {{bind 'parent'}}</li>{{/each}}</ul>");
             div.appendChild(Handlebars.parseHTML(template(context))[0]);
             context.parent = 321;
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(div.innerHTML).to.equal('<ul><li>1 - 321</li><li>2 - 321</li><li>3 - 321</li></ul>');
@@ -633,6 +666,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
             context.foo[1] = 5; // [1, 5, 3]
             context.foo.push(4); // [1, 5, 3, 4]
             context.foo.splice(0, 1); // [5, 3, 4]
+            Handlebars.update();
 
             setTimeout(function() {
               chai.expect(div.innerHTML).to.equal('<ul><li>5 - 0</li><li>3 - 1</li><li>4 - 2</li></ul>');
@@ -653,6 +687,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
       it("should unbind", function(done) {
         Handlebars.unbind(this.node);
         this.context.foo = 321;
+        Handlebars.update();
 
         setTimeout(function() {
           chai.expect(this.node.textContent).to.equal("123");
@@ -663,6 +698,7 @@ if (navigator.userAgent.indexOf('PhantomJS') < 0)
       it("should bind", function(done) {
         Handlebars.bind(this.node);
         this.context.foo = 111;
+        Handlebars.update();
 
         setTimeout(function() {
           chai.expect(this.node.textContent).to.equal("111");

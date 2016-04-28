@@ -34,10 +34,8 @@ When including the library, make sure to import all the dependencies in the same
 var context = {foo: 123};
 var template = Handlebars.templates["path/to/your/template"];
 var nodes = Handlebars.parseHTML(template(context));
-
 context.foo = 321;
-
-Platform.performMicrotaskCheckpoint(); // for older browsers support (optional)
+Handlebars.update();
 ```
 
 ## Examples
