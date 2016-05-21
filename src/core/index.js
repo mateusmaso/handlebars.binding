@@ -1,9 +1,15 @@
-import {traverse, path} from "./utils"
-import Binding from "./binding"
-import IfBinding from "./if_binding"
-import EachBinding from "./each_binding"
-var {helpers} = Handlebars;
-var {isString} = Handlebars.Utils;
+import {
+  Binding,
+  IfBinding,
+  EachBinding
+} from "../bindings";
+
+import {
+  traverse,
+  path
+} from "../utils";
+
+import deps, {getUtils} from "../deps";
 
 export function bind(root) {
   traverse(root, (node) => {
@@ -26,15 +32,15 @@ export function unbind(root) {
 };
 
 export function update() {
-  Platform.performMicrotaskCheckpoint();
+  deps.Platform.performMicrotaskCheckpoint();
 };
 
 export function register() {
-  Handlebars.registerHelper('bind', function(keypath, options) {
+  deps.Handlebars.registerHelper('bind', function(keypath, options) {
     return new Binding(this, keypath, null, options).initialize();
   });
 
-  Handlebars.registerHelper('if', function(conditional, options) {
+  deps.Handlebars.registerHelper('if', function(conditional, options) {
     var keypath;
 
     if (options.hash.bindAttr) {
@@ -42,7 +48,7 @@ export function register() {
       options.hash.bind = true;
     }
 
-    if (options.hash.bind && isString(conditional)) {
+    if (options.hash.bind && getUtils().isString(conditional)) {
       keypath = conditional;
       conditional = path(this, keypath);
     }
@@ -50,11 +56,11 @@ export function register() {
     return new IfBinding(this, keypath, conditional, options).initialize();
   });
 
-  Handlebars.registerHelper('each', function(items, options) {
+  deps.Handlebars.registerHelper('each', function(items, options) {
     return new EachBinding(this, null, items, options).initialize();
   });
 
-  Handlebars.registerHelper("unless", function(conditional, options) {
+  deps.Handlebars.registerHelper("unless", function(conditional, options) {
     var {fn, inverse} = options;
     var thenHash = options.hash.then;
     var elseHash = options.hash.else;
@@ -64,10 +70,10 @@ export function register() {
     options.hash.then = elseHash;
     options.hash.else = thenHash;
 
-    return helpers.if.apply(this, [conditional, options]);
+    return deps.Handlebars.helpers.if.apply(this, [conditional, options]);
   });
 
-  Handlebars.registerElement('binding', function(attributes) {
+  deps.Handlebars.registerElement('binding', function(attributes) {
     return attributes.id;
   });
 };

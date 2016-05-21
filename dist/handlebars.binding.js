@@ -1,6 +1,6 @@
 // handlebars.binding
 // ------------------
-// v0.3.1
+// v0.3.2
 //
 // Copyright (c) 2013-2016 Mateus Maso
 // Distributed under MIT license
@@ -9,47 +9,6 @@
 
 
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-(function (global){
-'use strict';
-
-var _binding = require('./handlebars.binding/binding');
-
-var _binding2 = _interopRequireDefault(_binding);
-
-var _if_binding = require('./handlebars.binding/if_binding');
-
-var _if_binding2 = _interopRequireDefault(_if_binding);
-
-var _each_binding = require('./handlebars.binding/each_binding');
-
-var _each_binding2 = _interopRequireDefault(_each_binding);
-
-var _core = require('./handlebars.binding/core');
-
-var _utils = require('./handlebars.binding/utils');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-(function (root, factory) {
-
-  if (typeof exports !== 'undefined') {
-    if (typeof module !== 'undefined' && module.exports) module.exports = factory(global.Handlebars);
-    exports = factory(global.Handlebars);
-  } else {
-    factory(root.Handlebars);
-  }
-})(undefined, function (Handlebars) {
-  var extend = Handlebars.Utils.extend;
-
-
-  extend(Handlebars, { Binding: _binding2.default, IfBinding: _if_binding2.default, EachBinding: _each_binding2.default, bind: _core.bind, unbind: _core.unbind, update: _core.update });
-  extend(Handlebars.Utils, { path: _utils.path, traverse: _utils.traverse, removeBetween: _utils.removeBetween, nodesBetween: _utils.nodesBetween, removeClass: _utils.removeClass, addClass: _utils.addClass, hasClass: _utils.hasClass, isFalsy: _utils.isFalsy });
-
-  (0, _core.register)();
-});
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./handlebars.binding/binding":2,"./handlebars.binding/core":3,"./handlebars.binding/each_binding":4,"./handlebars.binding/if_binding":5,"./handlebars.binding/utils":6}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -58,22 +17,17 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _utils = require("./utils");
+var _utils = require("../utils");
+
+var _deps = require("../deps");
+
+var _deps2 = _interopRequireDefault(_deps);
+
+var _core = require("../core");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var _Handlebars = Handlebars;
-var attributes = _Handlebars.attributes;
-var store = _Handlebars.store;
-var SafeString = _Handlebars.SafeString;
-var _Handlebars$Utils = Handlebars.Utils;
-var uniqueId = _Handlebars$Utils.uniqueId;
-var flatten = _Handlebars$Utils.flatten;
-var isString = _Handlebars$Utils.isString;
-var escapeExpression = _Handlebars$Utils.escapeExpression;
-var isArray = _Handlebars$Utils.isArray;
-var isObject = _Handlebars$Utils.isObject;
-var insertAfter = _Handlebars$Utils.insertAfter;
 
 var Binding = function () {
   function Binding(context, keypath, value, options) {
@@ -86,7 +40,7 @@ var Binding = function () {
     this.marker;
     this.delimiter;
 
-    this.id = uniqueId();
+    this.id = (0, _deps.getUtils)().uniqueId();
     this.value = value;
     this.context = context;
     this.keypath = keypath;
@@ -151,14 +105,14 @@ var Binding = function () {
 
       var attributeName = "binding-" + this.id;
 
-      Handlebars.registerAttribute(attributeName, function (node) {
+      _deps2.default.Handlebars.registerAttribute(attributeName, function (node) {
         return null;
       }, {
         ready: function ready(node) {
           _this.setNode(node);
           _this.render({ initialize: true });
           _this.observe();
-          delete attributes[attributeName];
+          delete _deps2.default.Handlebars.attributes[attributeName];
         }
       });
 
@@ -170,8 +124,8 @@ var Binding = function () {
       this.setNode(document.createTextNode(""));
       this.render({ initialize: true });
       this.observe();
-      store.hold(this.id, flatten([this.node]));
-      return new SafeString(this.createElement());
+      _deps2.default.Handlebars.store.hold(this.id, (0, _deps.getUtils)().flatten([this.node]));
+      return new _deps2.default.Handlebars.SafeString(this.createElement());
     }
   }, {
     key: "initializeBlock",
@@ -180,8 +134,8 @@ var Binding = function () {
       this.setDelimiter(document.createTextNode(""));
       var nodes = this.render({ initialize: true });
       this.observe();
-      store.hold(this.id, flatten([this.marker, nodes, this.delimiter]));
-      return new SafeString(this.createElement());
+      _deps2.default.Handlebars.store.hold(this.id, (0, _deps.getUtils)().flatten([this.marker, nodes, this.delimiter]));
+      return new _deps2.default.Handlebars.SafeString(this.createElement());
     }
   }, {
     key: "runOutput",
@@ -229,10 +183,10 @@ var Binding = function () {
     value: function renderInline() {
       var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
-      if (isString(this.output)) {
-        this.node.textContent = escapeExpression(new SafeString(this.output));
+      if ((0, _deps.getUtils)().isString(this.output)) {
+        this.node.textContent = (0, _deps.getUtils)().escapeExpression(new _deps2.default.Handlebars.SafeString(this.output));
       } else {
-        this.node.textContent = escapeExpression(this.output);
+        this.node.textContent = (0, _deps.getUtils)().escapeExpression(this.output);
       }
     }
   }, {
@@ -241,12 +195,12 @@ var Binding = function () {
       var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
       if (options.initialize) {
-        return Handlebars.parseHTML(this.output); // gambi
+        return _deps2.default.Handlebars.parseHTML(this.output); // gambi
       } else {
           (0, _utils.removeBetween)(this.marker, this.delimiter).forEach(function (node) {
-            return Handlebars.unbind(node);
+            return (0, _core.unbind)(node);
           });
-          insertAfter(this.marker, Handlebars.parseHTML(this.output));
+          (0, _deps.getUtils)().insertAfter(this.marker, _deps2.default.Handlebars.parseHTML(this.output));
         }
     }
   }, {
@@ -254,18 +208,18 @@ var Binding = function () {
     value: function observe() {
       var _this2 = this;
 
-      if (isArray(this.value)) {
-        this.setObserver(new ArrayObserver(this.value));
+      if ((0, _deps.getUtils)().isArray(this.value)) {
+        this.setObserver(new _deps2.default.ArrayObserver(this.value));
         this.observer.open(function () {
           return _this2.render();
         });
-      } else if (isObject(this.value)) {
-        this.setObserver(new ObjectObserver(this.value));
+      } else if ((0, _deps.getUtils)().isObject(this.value)) {
+        this.setObserver(new _deps2.default.ObjectObserver(this.value));
         this.observer.open(function () {
           return _this2.render();
         });
       } else {
-        this.setObserver(new PathObserver(this.context, this.keypath));
+        this.setObserver(new _deps2.default.PathObserver(this.context, this.keypath));
         this.observer.open(function (value) {
           _this2.value = value;
           _this2.render();
@@ -286,110 +240,7 @@ var Binding = function () {
 
 exports.default = Binding;
 
-},{"./utils":6}],3:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.bind = bind;
-exports.unbind = unbind;
-exports.update = update;
-exports.register = register;
-
-var _utils = require("./utils");
-
-var _binding = require("./binding");
-
-var _binding2 = _interopRequireDefault(_binding);
-
-var _if_binding = require("./if_binding");
-
-var _if_binding2 = _interopRequireDefault(_if_binding);
-
-var _each_binding = require("./each_binding");
-
-var _each_binding2 = _interopRequireDefault(_each_binding);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var _Handlebars = Handlebars;
-var helpers = _Handlebars.helpers;
-var isString = Handlebars.Utils.isString;
-function bind(root) {
-  (0, _utils.traverse)(root, function (node) {
-    if (node.binding) {
-      node.binding.observe();
-    } else if (node.bindings) {
-      node.bindings.forEach(function (binding) {
-        return binding.observe();
-      });
-    }
-  });
-};
-
-function unbind(root) {
-  (0, _utils.traverse)(root, function (node) {
-    if (node.binding) {
-      node.binding.stopObserving();
-    } else if (node.bindings) {
-      node.bindings.forEach(function (binding) {
-        return binding.stopObserving();
-      });
-    }
-  });
-};
-
-function update() {
-  Platform.performMicrotaskCheckpoint();
-};
-
-function register() {
-  Handlebars.registerHelper('bind', function (keypath, options) {
-    return new _binding2.default(this, keypath, null, options).initialize();
-  });
-
-  Handlebars.registerHelper('if', function (conditional, options) {
-    var keypath;
-
-    if (options.hash.bindAttr) {
-      options.hash.attr = options.hash.bindAttr;
-      options.hash.bind = true;
-    }
-
-    if (options.hash.bind && isString(conditional)) {
-      keypath = conditional;
-      conditional = (0, _utils.path)(this, keypath);
-    }
-
-    return new _if_binding2.default(this, keypath, conditional, options).initialize();
-  });
-
-  Handlebars.registerHelper('each', function (items, options) {
-    return new _each_binding2.default(this, null, items, options).initialize();
-  });
-
-  Handlebars.registerHelper("unless", function (conditional, options) {
-    var fn = options.fn;
-    var inverse = options.inverse;
-
-    var thenHash = options.hash.then;
-    var elseHash = options.hash.else;
-
-    options.fn = inverse;
-    options.inverse = fn;
-    options.hash.then = elseHash;
-    options.hash.else = thenHash;
-
-    return helpers.if.apply(this, [conditional, options]);
-  });
-
-  Handlebars.registerElement('binding', function (attributes) {
-    return attributes.id;
-  });
-};
-
-},{"./binding":2,"./each_binding":4,"./if_binding":5,"./utils":6}],4:[function(require,module,exports){
+},{"../core":5,"../deps":6,"../utils":8}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -404,7 +255,13 @@ var _binding = require("./binding");
 
 var _binding2 = _interopRequireDefault(_binding);
 
-var _utils = require("./utils");
+var _utils = require("../utils");
+
+var _deps = require("../deps");
+
+var _deps2 = _interopRequireDefault(_deps);
+
+var _core = require("../core");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -413,15 +270,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var _Handlebars = Handlebars;
-var store = _Handlebars.store;
-var SafeString = _Handlebars.SafeString;
-var _Handlebars$Utils = Handlebars.Utils;
-var flatten = _Handlebars$Utils.flatten;
-var isObject = _Handlebars$Utils.isObject;
-var extend = _Handlebars$Utils.extend;
-var insertAfter = _Handlebars$Utils.insertAfter;
 
 var ItemBinding = function (_Binding) {
   _inherits(ItemBinding, _Binding);
@@ -446,8 +294,8 @@ var ItemBinding = function (_Binding) {
     value: function runOutput() {
       if (this.options.hash.var) {
         this.context[this.options.hash.var] = this.value;
-      } else if (isObject(this.value)) {
-        extend(this.context, this.value);
+      } else if ((0, _deps.getUtils)().isObject(this.value)) {
+        (0, _deps.getUtils)().extend(this.context, this.value);
       }
 
       return this.setOutput(this.options.fn(this.context));
@@ -457,16 +305,16 @@ var ItemBinding = function (_Binding) {
     value: function observe() {
       var _this2 = this;
 
-      this.parentContextObserver = new ObjectObserver(this.options.hash.parentContext);
+      this.parentContextObserver = new _deps2.default.ObjectObserver(this.options.hash.parentContext);
       this.parentContextObserver.open(function () {
-        extend(_this2.context, _this2.options.hash.parentContext);
+        (0, _deps.getUtils)().extend(_this2.context, _this2.options.hash.parentContext);
       });
 
-      if (isObject(this.value)) {
+      if ((0, _deps.getUtils)().isObject(this.value)) {
         if (!this.options.hash.var) {
-          this.setObserver(new ObjectObserver(this.value));
+          this.setObserver(new _deps2.default.ObjectObserver(this.value));
           this.observer.open(function () {
-            return extend(_this2.context, _this2.value);
+            return (0, _deps.getUtils)().extend(_this2.context, _this2.value);
           });
         }
       }
@@ -504,7 +352,7 @@ var EachBinding = function (_Binding2) {
     value: function observe() {
       var _this4 = this;
 
-      this.setObserver(new ArrayObserver(this.value));
+      this.setObserver(new _deps2.default.ArrayObserver(this.value));
       this.observer.open(function (splices) {
         splices.forEach(function (splice) {
           _this4.empty = _this4.value.length == 0;
@@ -525,7 +373,7 @@ var EachBinding = function (_Binding2) {
       this.itemBindings = [];
 
       this.value.forEach(function (item, index) {
-        var itemBinding = new ItemBinding(extend({ index: index, "$this": item }, _this5.context), null, item, _this5.options);
+        var itemBinding = new ItemBinding((0, _deps.getUtils)().extend({ index: index, "$this": item }, _this5.context), null, item, _this5.options);
         _this5.itemBindings.push(itemBinding);
         output += itemBinding.initialize();
       });
@@ -568,8 +416,8 @@ var EachBinding = function (_Binding2) {
       }
 
       var item = this.value[index];
-      var itemBinding = new ItemBinding(extend({ index: index, "$this": item }, this.context), null, item, this.options);
-      insertAfter(previous, Handlebars.parseHTML(itemBinding.initialize()));
+      var itemBinding = new ItemBinding((0, _deps.getUtils)().extend({ index: index, "$this": item }, this.context), null, item, this.options);
+      (0, _deps.getUtils)().insertAfter(previous, _deps2.default.Handlebars.parseHTML(itemBinding.initialize()));
       this.itemBindings.splice(index, 0, itemBinding);
     }
   }, {
@@ -577,7 +425,7 @@ var EachBinding = function (_Binding2) {
     value: function removeItem(index) {
       var itemBinding = this.itemBindings[index];
       (0, _utils.removeBetween)(itemBinding.marker, itemBinding.delimiter).forEach(function (node) {
-        return Handlebars.unbind(node);
+        return (0, _core.unbind)(node);
       });
       itemBinding.marker.remove();
       itemBinding.delimiter.remove();
@@ -590,7 +438,7 @@ var EachBinding = function (_Binding2) {
 
 exports.default = EachBinding;
 
-},{"./binding":2,"./utils":6}],5:[function(require,module,exports){
+},{"../core":5,"../deps":6,"../utils":8,"./binding":1}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -605,7 +453,11 @@ var _binding = require('./binding');
 
 var _binding2 = _interopRequireDefault(_binding);
 
-var _utils = require('./utils');
+var _deps = require('../deps');
+
+var _deps2 = _interopRequireDefault(_deps);
+
+var _utils = require('../utils');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -614,8 +466,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var isArray = Handlebars.Utils.isArray;
 
 var IfBinding = function (_Binding) {
   _inherits(IfBinding, _Binding);
@@ -643,8 +493,8 @@ var IfBinding = function (_Binding) {
     value: function observe() {
       var _this2 = this;
 
-      if (isArray(this.value)) {
-        this.setObserver(new ArrayObserver(this.value));
+      if ((0, _deps.getUtils)().isArray(this.value)) {
+        this.setObserver(new _deps2.default.ArrayObserver(this.value));
         this.observer.open(function () {
           if ((0, _utils.isFalsy)(_this2.value) != _this2.falsy) {
             _this2.falsy = (0, _utils.isFalsy)(_this2.value);
@@ -652,7 +502,7 @@ var IfBinding = function (_Binding) {
           }
         });
       } else {
-        this.setObserver(new PathObserver(this.context, this.keypath));
+        this.setObserver(new _deps2.default.PathObserver(this.context, this.keypath));
         this.observer.open(function (value) {
           _this2.value = value;
           if ((0, _utils.isFalsy)(_this2.value) != _this2.falsy) {
@@ -693,7 +543,210 @@ var IfBinding = function (_Binding) {
 
 exports.default = IfBinding;
 
-},{"./binding":2,"./utils":6}],6:[function(require,module,exports){
+},{"../deps":6,"../utils":8,"./binding":1}],4:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.EachBinding = exports.IfBinding = exports.Binding = undefined;
+
+var _binding = require('./binding');
+
+var _binding2 = _interopRequireDefault(_binding);
+
+var _if_binding = require('./if_binding');
+
+var _if_binding2 = _interopRequireDefault(_if_binding);
+
+var _each_binding = require('./each_binding');
+
+var _each_binding2 = _interopRequireDefault(_each_binding);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.Binding = _binding2.default;
+exports.IfBinding = _if_binding2.default;
+exports.EachBinding = _each_binding2.default;
+
+},{"./binding":1,"./each_binding":2,"./if_binding":3}],5:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.bind = bind;
+exports.unbind = unbind;
+exports.update = update;
+exports.register = register;
+
+var _bindings = require("../bindings");
+
+var _utils = require("../utils");
+
+var _deps = require("../deps");
+
+var _deps2 = _interopRequireDefault(_deps);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function bind(root) {
+  (0, _utils.traverse)(root, function (node) {
+    if (node.binding) {
+      node.binding.observe();
+    } else if (node.bindings) {
+      node.bindings.forEach(function (binding) {
+        return binding.observe();
+      });
+    }
+  });
+};
+
+function unbind(root) {
+  (0, _utils.traverse)(root, function (node) {
+    if (node.binding) {
+      node.binding.stopObserving();
+    } else if (node.bindings) {
+      node.bindings.forEach(function (binding) {
+        return binding.stopObserving();
+      });
+    }
+  });
+};
+
+function update() {
+  _deps2.default.Platform.performMicrotaskCheckpoint();
+};
+
+function register() {
+  _deps2.default.Handlebars.registerHelper('bind', function (keypath, options) {
+    return new _bindings.Binding(this, keypath, null, options).initialize();
+  });
+
+  _deps2.default.Handlebars.registerHelper('if', function (conditional, options) {
+    var keypath;
+
+    if (options.hash.bindAttr) {
+      options.hash.attr = options.hash.bindAttr;
+      options.hash.bind = true;
+    }
+
+    if (options.hash.bind && (0, _deps.getUtils)().isString(conditional)) {
+      keypath = conditional;
+      conditional = (0, _utils.path)(this, keypath);
+    }
+
+    return new _bindings.IfBinding(this, keypath, conditional, options).initialize();
+  });
+
+  _deps2.default.Handlebars.registerHelper('each', function (items, options) {
+    return new _bindings.EachBinding(this, null, items, options).initialize();
+  });
+
+  _deps2.default.Handlebars.registerHelper("unless", function (conditional, options) {
+    var fn = options.fn;
+    var inverse = options.inverse;
+
+    var thenHash = options.hash.then;
+    var elseHash = options.hash.else;
+
+    options.fn = inverse;
+    options.inverse = fn;
+    options.hash.then = elseHash;
+    options.hash.else = thenHash;
+
+    return _deps2.default.Handlebars.helpers.if.apply(this, [conditional, options]);
+  });
+
+  _deps2.default.Handlebars.registerElement('binding', function (attributes) {
+    return attributes.id;
+  });
+};
+
+},{"../bindings":4,"../deps":6,"../utils":8}],6:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getUtils = getUtils;
+var deps = {};
+
+function getUtils() {
+  return deps.Handlebars.Utils;
+}
+
+exports.default = deps;
+
+},{}],7:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _bindings = require('./bindings');
+
+var _core = require('./core');
+
+var _utils = require('./utils');
+
+var _deps = require('./deps');
+
+var _deps2 = _interopRequireDefault(_deps);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function HandlebarsBinding(Handlebars, Observe, Platform) {
+  var extend = Handlebars.Utils.extend;
+
+
+  extend(_deps2.default, {
+    Handlebars: Handlebars,
+    Observer: Observe.Observer,
+    ArrayObserver: Observe.ArrayObserver,
+    ObjectObserver: Observe.ObjectObserver,
+    PathObserver: Observe.PathObserver,
+    Platform: Platform
+  });
+
+  extend(Handlebars, {
+    Binding: _bindings.Binding,
+    IfBinding: _bindings.IfBinding,
+    EachBinding: _bindings.EachBinding,
+    bind: _core.bind,
+    unbind: _core.unbind,
+    update: _core.update
+  });
+
+  extend(Handlebars.Utils, {
+    path: _utils.path,
+    traverse: _utils.traverse,
+    removeBetween: _utils.removeBetween,
+    nodesBetween: _utils.nodesBetween,
+    removeClass: _utils.removeClass,
+    addClass: _utils.addClass,
+    hasClass: _utils.hasClass,
+    isFalsy: _utils.isFalsy
+  });
+
+  (0, _core.register)();
+
+  return Handlebars;
+}
+
+if (typeof window !== "undefined" && window.Handlebars && window.Platform) {
+  HandlebarsBinding = HandlebarsBinding(window.Handlebars, {
+    Observer: window.Observer,
+    ArrayObserver: window.ArrayObserver,
+    ObjectObserver: window.ObjectObserver,
+    PathObserver: window.PathObserver
+  }, window.Platform);
+}
+
+exports.default = HandlebarsBinding;
+
+},{"./bindings":4,"./core":5,"./deps":6,"./utils":8}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -707,14 +760,20 @@ exports.nodesBetween = nodesBetween;
 exports.removeBetween = removeBetween;
 exports.traverse = traverse;
 exports.path = path;
-var isEmpty = Handlebars.Utils.isEmpty;
+
+var _deps = require('../deps');
+
+var _deps2 = _interopRequireDefault(_deps);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function isFalsy(object) {
-  return !object || isEmpty(object);
-};
+  return !object || (0, _deps.getUtils)().isEmpty(object);
+}
 
 function hasClass(node, value) {
   return node.className.match(new RegExp('(\\s|^)' + value + '(\\s|$)'));
-};
+}
 
 function addClass(node, value) {
   if (!hasClass(node, value)) {
@@ -724,13 +783,13 @@ function addClass(node, value) {
       return node.className += ' ' + value;
     }
   }
-};
+}
 
 function removeClass(node, value) {
   if (hasClass(node, value)) {
     return node.className = node.className.replace(new RegExp('(\\s|^)' + value + '(\\s|$)'), '');
   }
-};
+}
 
 function nodesBetween(firstNode, lastNode) {
   var next = firstNode.nextSibling;
@@ -743,7 +802,7 @@ function nodesBetween(firstNode, lastNode) {
   }
 
   return nodes;
-};
+}
 
 function removeBetween(firstNode, lastNode) {
   var nodes = nodesBetween(firstNode, lastNode);
@@ -751,7 +810,7 @@ function removeBetween(firstNode, lastNode) {
     return node.remove();
   });
   return nodes;
-};
+}
 
 function traverse(node, callback) {
   callback.apply(this, [node]);
@@ -760,7 +819,7 @@ function traverse(node, callback) {
     traverse(node, callback);
     node = node.nextSibling;
   }
-};
+}
 
 function path(context, key) {
   var paths = key.split('.');
@@ -769,6 +828,6 @@ function path(context, key) {
     return object = object[path];
   });
   return object;
-};
+}
 
-},{}]},{},[1,2,3,4,5,6]);
+},{"../deps":6}]},{},[1,2,3,4,5,6,7,8]);

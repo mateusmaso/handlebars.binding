@@ -1,6 +1,12 @@
-import {path, removeClass, addClass, removeBetween} from "./utils"
-var {attributes, store, SafeString} = Handlebars;
-var {uniqueId, flatten, isString, escapeExpression, isArray, isObject, insertAfter} = Handlebars.Utils;
+import {
+  path,
+  removeClass,
+  addClass,
+  removeBetween
+} from "../utils";
+
+import deps, {getUtils} from "../deps";
+import {unbind} from "../core";
 
 export default class Binding {
   constructor(context, keypath, value, options) {
@@ -11,7 +17,7 @@ export default class Binding {
     this.marker;
     this.delimiter;
 
-    this.id = uniqueId();
+    this.id = getUtils().uniqueId();
     this.value = value;
     this.context = context;
     this.keypath = keypath;
@@ -64,14 +70,14 @@ export default class Binding {
   initializeAttribute(node) {
     var attributeName = `binding-${this.id}`;
 
-    Handlebars.registerAttribute(attributeName, (node) => {
+    deps.Handlebars.registerAttribute(attributeName, (node) => {
       return null;
     }, {
       ready: (node) => {
         this.setNode(node);
         this.render({initialize: true});
         this.observe();
-        delete attributes[attributeName];
+        delete deps.Handlebars.attributes[attributeName];
       }
     });
 
@@ -82,8 +88,8 @@ export default class Binding {
     this.setNode(document.createTextNode(""));
     this.render({initialize: true});
     this.observe();
-    store.hold(this.id, flatten([this.node]));
-    return new SafeString(this.createElement());
+    deps.Handlebars.store.hold(this.id, getUtils().flatten([this.node]));
+    return new deps.Handlebars.SafeString(this.createElement());
   }
 
   initializeBlock() {
@@ -91,8 +97,8 @@ export default class Binding {
     this.setDelimiter(document.createTextNode(""));
     var nodes = this.render({initialize: true});
     this.observe();
-    store.hold(this.id, flatten([this.marker, nodes, this.delimiter]));
-    return new SafeString(this.createElement());
+    deps.Handlebars.store.hold(this.id, getUtils().flatten([this.marker, nodes, this.delimiter]));
+    return new deps.Handlebars.SafeString(this.createElement());
   }
 
   runOutput() {
@@ -130,31 +136,31 @@ export default class Binding {
   }
 
   renderInline(options={}) {
-    if (isString(this.output)) {
-      this.node.textContent = escapeExpression(new SafeString(this.output));
+    if (getUtils().isString(this.output)) {
+      this.node.textContent = getUtils().escapeExpression(new deps.Handlebars.SafeString(this.output));
     } else {
-      this.node.textContent = escapeExpression(this.output);
+      this.node.textContent = getUtils().escapeExpression(this.output);
     }
   }
 
   renderBlock(options={}) {
     if (options.initialize) {
-      return Handlebars.parseHTML(this.output); // gambi
+      return deps.Handlebars.parseHTML(this.output); // gambi
     } else {
-      removeBetween(this.marker, this.delimiter).forEach((node) => Handlebars.unbind(node));
-      insertAfter(this.marker, Handlebars.parseHTML(this.output));
+      removeBetween(this.marker, this.delimiter).forEach((node) => unbind(node));
+      getUtils().insertAfter(this.marker, deps.Handlebars.parseHTML(this.output));
     }
   }
 
   observe() {
-    if (isArray(this.value)) {
-      this.setObserver(new ArrayObserver(this.value));
+    if (getUtils().isArray(this.value)) {
+      this.setObserver(new deps.ArrayObserver(this.value));
       this.observer.open(() => this.render());
-    } else if (isObject(this.value)) {
-      this.setObserver(new ObjectObserver(this.value));
+    } else if (getUtils().isObject(this.value)) {
+      this.setObserver(new deps.ObjectObserver(this.value));
       this.observer.open(() => this.render());
     } else {
-      this.setObserver(new PathObserver(this.context, this.keypath));
+      this.setObserver(new deps.PathObserver(this.context, this.keypath));
       this.observer.open((value) => {
         this.value = value;
         this.render();

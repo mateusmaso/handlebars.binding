@@ -1,27 +1,24 @@
 {
   "name": "handlebars.binding",
   "description": "Handlebars plugin for one-way data binding",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "author": "mateusmaso",
   "keywords": [
     "handlebars",
     "javascript",
-    "data",
-    "binding"
+    "data binding"
   ],
   "devDependencies": {
-    "babel-preset-es2015": "^6.5.0",
-    "babelify": "^7.2.0",
     "chai": "*",
+    "mocha": "*",
     "grunt": "~0.4.5",
     "grunt-babel": "^6.0.0",
     "grunt-browserify": "~4.0.1",
     "grunt-contrib-uglify": "~0.5.0",
-    "grunt-mocha": "~0.4.0",
-    "handlebars": "~1.1.0",
-    "handlebars.element": "~0.1.1",
-    "mocha": "*",
-    "observe-js": "~0.4.0"
+    "grunt-mocha-test": "~0.11.0",
+    "babel-preset-es2015": "^6.5.0",
+    "babelify": "^7.2.0",
+    "jsdom": "^9.1.0"
   },
   "licenses": [
     {
@@ -36,10 +33,14 @@
   "dependencies": {
     "observe-js": "~0.4.0",
     "handlebars": "~1.1.0",
-    "handlebars.element": "~0.1.3"
+    "handlebars.element": "~0.3.0"
   },
   "scripts": {
-    "test": "grunt mocha"
+    "test": "grunt mochaTest"
   },
-  "main": "dist/handlebars.binding.js"
+  "engines": {
+    "node" : "~5.9.0"
+  },
+  "license": "MIT",
+  "main": "lib/index.js"
 }

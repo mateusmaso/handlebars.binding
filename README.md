@@ -14,21 +14,30 @@ This library is an extension for Handlebars which allows using data binding on p
 
 ## Dependencies
 
-* observe.js (>= 0.4.0)
-* handlebars.js (>= 1.1.0)
-  * handlebars.element.js (>= 0.1.3)
+* observe.js
+* handlebars.js
+* handlebars.element.js
 
 ## Node
 
 ```javascript
-var Handlebars = global.Handlebars = require("handlebars");
-require("handlebars.element");
-require("handlebars.binding");
+var Observe = require("observe-js");
+var Handlebars = require("handlebars");
+require("handlebars.element").default(Handlebars);
+require("handlebars.binding").default(Handlebars, Observe, Platform);
+```
+
+## ES6
+
+```javascript
+import Observe from "observe-js";
+import Handlebars from "handlebars";
+import HandlebarsElement from "handlebars.element";
+import HandlebarsBinding from "handlebars.binding";
+HandlebarsBinding(HandlebarsElement(Handlebars, Observe, Platform));
 ```
 
 ## Usage
-
-When including the library, make sure to import all the dependencies in the same order as listed before. Once made it, do not forget to parse the rendered string HTML from your template's method and notify any changes by calling the ```performMicrotaskCheckpoint``` if needed.
 
 ```javascript
 var context = {foo: 123};
@@ -109,4 +118,4 @@ Handlebars.bind(node);
 
 ## License
 
-Copyright (c) 2013-2016 Mateus Maso. Released under an MIT license.
+Copyright (c) 2013 Mateus Maso. Released under an MIT license.

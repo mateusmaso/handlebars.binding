@@ -1,6 +1,11 @@
 import Binding from './binding';
-import {isFalsy, addClass, removeClass} from './utils';
-var {isArray} = Handlebars.Utils;
+import deps, {getUtils} from "../deps";
+
+import {
+  isFalsy,
+  addClass,
+  removeClass
+} from '../utils';
 
 export default class IfBinding extends Binding {
   constructor(context, keypath, value, options) {
@@ -17,8 +22,8 @@ export default class IfBinding extends Binding {
   }
 
   observe() {
-    if (isArray(this.value)) {
-      this.setObserver(new ArrayObserver(this.value));
+    if (getUtils().isArray(this.value)) {
+      this.setObserver(new deps.ArrayObserver(this.value));
       this.observer.open(() => {
         if (isFalsy(this.value) != this.falsy) {
           this.falsy = isFalsy(this.value);
@@ -26,7 +31,7 @@ export default class IfBinding extends Binding {
         }
       });
     } else {
-      this.setObserver(new PathObserver(this.context, this.keypath));
+      this.setObserver(new deps.PathObserver(this.context, this.keypath));
       this.observer.open((value) => {
         this.value = value;
         if (isFalsy(this.value) != this.falsy) {
