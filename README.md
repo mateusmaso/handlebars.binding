@@ -1,55 +1,32 @@
 handlebars.binding [![Build Status](https://travis-ci.org/mateusmaso/handlebars.binding.svg?branch=master)](https://travis-ci.org/mateusmaso/handlebars.binding)
 ==================
 
-This library is an extension for Handlebars which allows using data binding on pre-existing templates. Yet, it offers a simple and powerful way of building highly interactive templates without re-rendering or updating DOM manually.
+This is a Handlebars plugin which allows using one-way data binding inside templates with a clean markup. It saves development time by offering a simple and powerful way of building highly interactive templates without re-rendering or updating the DOM manually.
 
-## Features
+## Install
 
-* Clean markup.
-* One-way data binding.
-* New ```bind``` helper method.
-* Support for blocks, attributes and inline binding.
-* Now ```each```, ```if``` and ```unless``` allows binding.
-* Optional use and works on pre-existing handlebars templates.
-
-## Dependencies
-
-* observe.js
-* handlebars.js
-* handlebars.element.js
-
-## Node
-
-```javascript
-var Observe = require("observe-js");
-var Handlebars = require("handlebars");
-require("handlebars.element").default(Handlebars);
-require("handlebars.binding").default(Handlebars, Observe, Platform);
 ```
-
-## ES6
-
-```javascript
-import Observe from "observe-js";
-import Handlebars from "handlebars";
-import HandlebarsElement from "handlebars.element";
-import HandlebarsBinding from "handlebars.binding";
-HandlebarsBinding(HandlebarsElement(Handlebars, Observe, Platform));
+$ npm install --save handlebars.binding
 ```
 
 ## Usage
 
 ```javascript
+var Handlebars = require("handlebars");
+require("handlebars.binding").default(Handlebars);
+
 var context = {foo: 123};
-var template = Handlebars.templates["path/to/your/template"];
+var template = Handlebars.templates["path/to/template"];
 var nodes = Handlebars.parseHTML(template(context));
+
 context.foo = 321;
+
 Handlebars.update();
 ```
 
 ## Examples
 
-### Bind helper
+### Binding with ```bind``` helper
 
 ```html
 <h1>{{bind "foo"}}</h1>
@@ -67,7 +44,7 @@ Handlebars.update();
 {{/bind}}
 ```
 
-### If and Unless helper
+### Binding with ```if``` and ```unless``` helper
 
 ```html
 <h1>{{if "foo" bind=true then="Hello" else="World"}}</h1>
@@ -87,7 +64,7 @@ Handlebars.update();
 {{/if}}
 ```
 
-### Each helper
+### Binding with ```each``` helper
 
 ```html
 {{#each objects var="object" bind=true}}
@@ -109,7 +86,7 @@ Handlebars.update();
 {{/each}}
 ```
 
-### Unbind and Bind methods
+### Unbinding and rebinding DOM
 
 ```javascript
 Handlebars.unbind(node);
@@ -118,4 +95,4 @@ Handlebars.bind(node);
 
 ## License
 
-Copyright (c) 2013 Mateus Maso. Released under an MIT license.
+MIT © [Mateus Maso](http://www.mateusmaso.com)

@@ -1,4 +1,10 @@
 import {
+  ArrayObserver,
+  ObjectObserver,
+  PathObserver
+} from "observe-js";
+
+import {
   path,
   removeClass,
   addClass,
@@ -154,13 +160,13 @@ export default class Binding {
 
   observe() {
     if (getUtils().isArray(this.value)) {
-      this.setObserver(new deps.ArrayObserver(this.value));
+      this.setObserver(new ArrayObserver(this.value));
       this.observer.open(() => this.render());
     } else if (getUtils().isObject(this.value)) {
-      this.setObserver(new deps.ObjectObserver(this.value));
+      this.setObserver(new ObjectObserver(this.value));
       this.observer.open(() => this.render());
     } else {
-      this.setObserver(new deps.PathObserver(this.context, this.keypath));
+      this.setObserver(new PathObserver(this.context, this.keypath));
       this.observer.open((value) => {
         this.value = value;
         this.render();

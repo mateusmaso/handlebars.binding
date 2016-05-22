@@ -1,3 +1,8 @@
+import {
+  ArrayObserver,
+  PathObserver
+} from "observe-js";
+
 import Binding from './binding';
 import deps, {getUtils} from "../deps";
 
@@ -23,7 +28,7 @@ export default class IfBinding extends Binding {
 
   observe() {
     if (getUtils().isArray(this.value)) {
-      this.setObserver(new deps.ArrayObserver(this.value));
+      this.setObserver(new ArrayObserver(this.value));
       this.observer.open(() => {
         if (isFalsy(this.value) != this.falsy) {
           this.falsy = isFalsy(this.value);
@@ -31,7 +36,7 @@ export default class IfBinding extends Binding {
         }
       });
     } else {
-      this.setObserver(new deps.PathObserver(this.context, this.keypath));
+      this.setObserver(new PathObserver(this.context, this.keypath));
       this.observer.open((value) => {
         this.value = value;
         if (isFalsy(this.value) != this.falsy) {

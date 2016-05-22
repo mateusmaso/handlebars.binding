@@ -1,3 +1,8 @@
+import {
+  ArrayObserver,
+  ObjectObserver
+} from "observe-js";
+
 import Binding from './binding';
 import {removeBetween} from "../utils";
 import deps, {getUtils} from "../deps";
@@ -23,14 +28,14 @@ class ItemBinding extends Binding {
   }
 
   observe() {
-    this.parentContextObserver = new deps.ObjectObserver(this.options.hash.parentContext);
+    this.parentContextObserver = new ObjectObserver(this.options.hash.parentContext);
     this.parentContextObserver.open(() => {
       getUtils().extend(this.context, this.options.hash.parentContext)
     });
 
     if (getUtils().isObject(this.value)) {
       if (!this.options.hash.var) {
-        this.setObserver(new deps.ObjectObserver(this.value));
+        this.setObserver(new ObjectObserver(this.value));
         this.observer.open(() => getUtils().extend(this.context, this.value));
       }
     }
@@ -54,7 +59,7 @@ export default class EachBinding extends Binding {
   }
 
   observe() {
-    this.setObserver(new deps.ArrayObserver(this.value));
+    this.setObserver(new ArrayObserver(this.value));
     this.observer.open((splices) => {
       splices.forEach((splice) => {
         this.empty = this.value.length == 0;

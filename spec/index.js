@@ -2,10 +2,8 @@ var jsdom = require("jsdom").jsdom;
 var document = global.document = jsdom("test");
 var window = global.window = document.defaultView;
 var chai = require("chai");
-var Observe = require("observe-js");
 var Handlebars = require("handlebars");
-require("handlebars.element").default(Handlebars);
-require("../lib").default(Handlebars, Observe, Platform);
+require("../lib").default(Handlebars);
 
 describe("handlebars.binding", function() {
   describe("bind helper", function() {

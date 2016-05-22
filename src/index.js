@@ -1,3 +1,5 @@
+import HandlebarsElement from "handlebars.element";
+
 import {
   Binding,
   IfBinding,
@@ -24,17 +26,12 @@ import {
 
 import deps from "./deps";
 
-function HandlebarsBinding(Handlebars, Observe, Platform) {
+function HandlebarsBinding(Handlebars) {
+  HandlebarsElement(Handlebars);
+
   var {extend} = Handlebars.Utils;
 
-  extend(deps, {
-    Handlebars,
-    Observer: Observe.Observer,
-    ArrayObserver: Observe.ArrayObserver,
-    ObjectObserver: Observe.ObjectObserver,
-    PathObserver: Observe.PathObserver,
-    Platform
-  });
+  extend(deps, {Handlebars});
 
   extend(Handlebars, {
     Binding,
@@ -61,13 +58,8 @@ function HandlebarsBinding(Handlebars, Observe, Platform) {
   return Handlebars;
 }
 
-if (typeof window !== "undefined" && window.Handlebars && window.Platform) {
-  HandlebarsBinding = HandlebarsBinding(window.Handlebars, {
-    Observer: window.Observer,
-    ArrayObserver: window.ArrayObserver,
-    ObjectObserver: window.ObjectObserver,
-    PathObserver: window.PathObserver
-  }, window.Platform);
+if (typeof window !== "undefined" && window.Handlebars) {
+  HandlebarsBinding = HandlebarsBinding(window.Handlebars);
 }
 
 export default HandlebarsBinding;

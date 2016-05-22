@@ -1,3 +1,5 @@
+import Observe from "observe-js";
+
 import {
   Binding,
   IfBinding,
@@ -32,7 +34,7 @@ export function unbind(root) {
 };
 
 export function update() {
-  deps.Platform.performMicrotaskCheckpoint();
+  Platform.performMicrotaskCheckpoint();
 };
 
 export function register() {
