@@ -1,9 +1,11 @@
-var jsdom = require("jsdom").jsdom;
-var document = global.document = jsdom("test");
-var window = global.window = document.defaultView;
-var chai = require("chai");
-var Handlebars = require("handlebars");
-require("../lib").default(Handlebars);
+if (typeof window === "undefined") {
+  var jsdom = require("jsdom").jsdom;
+  var document = global.document = jsdom("test");
+  var window = global.window = document.defaultView;
+  var chai = require("chai");
+  var Handlebars = require("handlebars");
+  require("../lib").default(Handlebars);
+}
 
 describe("handlebars.binding", function() {
   describe("bind helper", function() {

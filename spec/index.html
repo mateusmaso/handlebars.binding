@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>handlebars.binding</title>
+    <link rel="stylesheet" media="all" href="../node_modules/mocha/mocha.css">
+    <script src="../node_modules/mocha/mocha.js"></script>
+    <script src="../node_modules/chai/chai.js"></script>
+    <script src="../node_modules/handlebars/dist/handlebars.js"></script>
+    <script src="../dist/handlebars.binding.js"></script>
+  </head>
+
+  <body>
+    <div id="mocha"></div>
+    <div id="fixtures"></div>
+
+    <script>mocha.setup('bdd');</script>
+    <script src="index.js"></script>
+    <script>mocha.run();</script>
+  </body>
+</html>

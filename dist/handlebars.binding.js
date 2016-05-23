@@ -1,6 +1,6 @@
 // handlebars.binding
 // ------------------
-// v0.3.4
+// v0.3.5
 //
 // Copyright (c) 2013-2016 Mateus Maso
 // Distributed under MIT license
@@ -713,34 +713,36 @@ var _deps2 = _interopRequireDefault(_deps);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function HandlebarsBinding(Handlebars) {
-  (0, _handlebars2.default)(Handlebars);
+  if (!_deps2.default.Handlebars) {
+    (0, _handlebars2.default)(Handlebars);
 
-  var extend = Handlebars.Utils.extend;
+    var extend = Handlebars.Utils.extend;
 
 
-  extend(_deps2.default, { Handlebars: Handlebars });
+    extend(_deps2.default, { Handlebars: Handlebars });
 
-  extend(Handlebars, {
-    Binding: _bindings.Binding,
-    IfBinding: _bindings.IfBinding,
-    EachBinding: _bindings.EachBinding,
-    bind: _core.bind,
-    unbind: _core.unbind,
-    update: _core.update
-  });
+    extend(Handlebars, {
+      Binding: _bindings.Binding,
+      IfBinding: _bindings.IfBinding,
+      EachBinding: _bindings.EachBinding,
+      bind: _core.bind,
+      unbind: _core.unbind,
+      update: _core.update
+    });
 
-  extend(Handlebars.Utils, {
-    path: _utils.path,
-    traverse: _utils.traverse,
-    removeBetween: _utils.removeBetween,
-    nodesBetween: _utils.nodesBetween,
-    removeClass: _utils.removeClass,
-    addClass: _utils.addClass,
-    hasClass: _utils.hasClass,
-    isFalsy: _utils.isFalsy
-  });
+    extend(Handlebars.Utils, {
+      path: _utils.path,
+      traverse: _utils.traverse,
+      removeBetween: _utils.removeBetween,
+      nodesBetween: _utils.nodesBetween,
+      removeClass: _utils.removeClass,
+      addClass: _utils.addClass,
+      hasClass: _utils.hasClass,
+      isFalsy: _utils.isFalsy
+    });
 
-  (0, _core.register)();
+    (0, _core.register)();
+  }
 
   return Handlebars;
 }
@@ -1018,30 +1020,32 @@ var _deps2 = _interopRequireDefault(_deps);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function HandlebarsElement(Handlebars) {
-  (0, _utils.extend)(_deps2.default, { Handlebars: Handlebars });
+  if (!_deps2.default.Handlebars) {
+    (0, _utils.extend)(_deps2.default, { Handlebars: Handlebars });
 
-  (0, _utils.extend)(Handlebars, {
-    store: _store2.default,
-    elements: _core.elements,
-    attributes: _core.attributes,
-    registerElement: _core.registerElement,
-    registerAttribute: _core.registerAttribute,
-    parseValue: _core.parseValue,
-    parseHTML: _core.parseHTML
-  });
+    (0, _utils.extend)(Handlebars, {
+      store: _store2.default,
+      elements: _core.elements,
+      attributes: _core.attributes,
+      registerElement: _core.registerElement,
+      registerAttribute: _core.registerAttribute,
+      parseValue: _core.parseValue,
+      parseHTML: _core.parseHTML
+    });
 
-  (0, _utils.extend)(Handlebars.Utils, {
-    extend: _utils.extend,
-    isObject: _utils.isObject,
-    isString: _utils.isString,
-    uniqueId: _utils.uniqueId,
-    flatten: _utils.flatten,
-    camelize: _utils.camelize,
-    replaceWith: _utils.replaceWith,
-    insertAfter: _utils.insertAfter,
-    escapeExpression: _utils.escapeExpression,
-    _escapeExpression: Handlebars.Utils.escapeExpression
-  });
+    (0, _utils.extend)(Handlebars.Utils, {
+      extend: _utils.extend,
+      isObject: _utils.isObject,
+      isString: _utils.isString,
+      uniqueId: _utils.uniqueId,
+      flatten: _utils.flatten,
+      camelize: _utils.camelize,
+      replaceWith: _utils.replaceWith,
+      insertAfter: _utils.insertAfter,
+      escapeExpression: _utils.escapeExpression,
+      _escapeExpression: Handlebars.Utils.escapeExpression
+    });
+  }
 
   return Handlebars;
 }
@@ -2927,4 +2931,4 @@ function escapeExpression(value) {
 })(typeof global !== 'undefined' && global && typeof module !== 'undefined' && module ? global : this || window);
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}]},{},[1,2,3,4,5,6,7,8]);
+},{}]},{},[7]);

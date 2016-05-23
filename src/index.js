@@ -27,33 +27,35 @@ import {
 import deps from "./deps";
 
 export default function HandlebarsBinding(Handlebars) {
-  HandlebarsElement(Handlebars);
+  if (!deps.Handlebars) {
+    HandlebarsElement(Handlebars);
 
-  var {extend} = Handlebars.Utils;
+    var {extend} = Handlebars.Utils;
 
-  extend(deps, {Handlebars});
+    extend(deps, {Handlebars});
 
-  extend(Handlebars, {
-    Binding,
-    IfBinding,
-    EachBinding,
-    bind,
-    unbind,
-    update
-  });
+    extend(Handlebars, {
+      Binding,
+      IfBinding,
+      EachBinding,
+      bind,
+      unbind,
+      update
+    });
 
-  extend(Handlebars.Utils, {
-    path,
-    traverse,
-    removeBetween,
-    nodesBetween,
-    removeClass,
-    addClass,
-    hasClass,
-    isFalsy
-  });
+    extend(Handlebars.Utils, {
+      path,
+      traverse,
+      removeBetween,
+      nodesBetween,
+      removeClass,
+      addClass,
+      hasClass,
+      isFalsy
+    });
 
-  register();
+    register();
+  }
 
   return Handlebars;
 }

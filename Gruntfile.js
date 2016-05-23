@@ -44,7 +44,7 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'dist/<%= pkg.name %>.js': ['lib/**/*.js']
+          'dist/<%= pkg.name %>.js': ['lib/index.js']
         }
       }
     },
@@ -54,15 +54,22 @@ module.exports = function(grunt) {
           reporter: 'spec',
           mocha: require('mocha')
         },
-        src: ['spec/**/*.js']
+        src: ['spec/index.js']
       }
+    },
+    mocha_phantomjs: {
+      options: {
+        reporter: 'spec'
+      },
+      all: ['spec/index.html']
     }
   });
 
   grunt.loadNpmTasks('grunt-mocha-test');
+  grunt.loadNpmTasks('grunt-mocha-phantomjs');
   grunt.loadNpmTasks('grunt-babel');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
-  grunt.registerTask('default', ['babel', 'browserify', 'uglify', 'mochaTest']);
+  grunt.registerTask('default', ['babel', 'browserify', 'uglify', 'mochaTest', 'mocha_phantomjs']);
 };
