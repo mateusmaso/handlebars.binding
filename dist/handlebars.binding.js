@@ -1,6 +1,6 @@
 // handlebars.binding
 // ------------------
-// v0.3.5
+// v0.3.6
 //
 // Copyright (c) 2013-2016 Mateus Maso
 // Distributed under MIT license
@@ -974,7 +974,7 @@ function parseHTML(html) {
         var bindingAttributeName = (0, _utils.camelize)(bindingAttribute.nodeName);
         var bool = bindingElementFn.options.booleans && bindingElementFn.options.booleans.indexOf(bindingAttributeName) >= 0;
 
-        bindingElementAttributes[bindingAttributeName] = parseValue(bindingAttribute.nodeValue, bool);
+        bindingElementAttributes[bindingAttributeName] = this.parseValue(bindingAttribute.nodeValue, bool);
       }
 
       var newElement = bindingElementFn.apply(bindingElement, [bindingElementAttributes]);
