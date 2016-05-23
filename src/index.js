@@ -26,7 +26,7 @@ import {
 
 import deps from "./deps";
 
-function HandlebarsBinding(Handlebars) {
+export default function HandlebarsBinding(Handlebars) {
   HandlebarsElement(Handlebars);
 
   var {extend} = Handlebars.Utils;
@@ -59,7 +59,5 @@ function HandlebarsBinding(Handlebars) {
 }
 
 if (typeof window !== "undefined" && window.Handlebars) {
-  HandlebarsBinding = HandlebarsBinding(window.Handlebars);
+  HandlebarsBinding(window.Handlebars);
 }
-
-export default HandlebarsBinding;

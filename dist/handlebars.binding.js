@@ -1,6 +1,6 @@
 // handlebars.binding
 // ------------------
-// v0.3.3
+// v0.3.4
 //
 // Copyright (c) 2013-2016 Mateus Maso
 // Distributed under MIT license
@@ -694,6 +694,7 @@ exports.default = deps;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.default = HandlebarsBinding;
 
 var _handlebars = require("handlebars.element");
 
@@ -745,10 +746,8 @@ function HandlebarsBinding(Handlebars) {
 }
 
 if (typeof window !== "undefined" && window.Handlebars) {
-  HandlebarsBinding = HandlebarsBinding(window.Handlebars);
+  HandlebarsBinding(window.Handlebars);
 }
-
-exports.default = HandlebarsBinding;
 
 },{"./bindings":4,"./core":5,"./deps":6,"./utils":8,"handlebars.element":11}],8:[function(require,module,exports){
 'use strict';
@@ -1002,6 +1001,7 @@ arguments[4][6][0].apply(exports,arguments)
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.default = HandlebarsElement;
 
 var _utils = require('./utils');
 
@@ -1047,10 +1047,8 @@ function HandlebarsElement(Handlebars) {
 }
 
 if (typeof window !== "undefined" && window.Handlebars) {
-  HandlebarsElement = HandlebarsElement(window.Handlebars);
+  HandlebarsElement(window.Handlebars);
 }
-
-exports.default = HandlebarsElement;
 
 },{"./core":9,"./deps":10,"./store":12,"./utils":13}],12:[function(require,module,exports){
 "use strict";

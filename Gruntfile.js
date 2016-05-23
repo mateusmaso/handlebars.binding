@@ -56,8 +56,7 @@ module.exports = function(grunt) {
         },
         src: ['spec/**/*.js']
       }
-    },
-    clean: ['lib', 'dist']
+    }
   });
 
   grunt.loadNpmTasks('grunt-mocha-test');
