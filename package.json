@@ -34,7 +34,7 @@
     "test": "grunt mochaTest mocha_phantomjs"
   },
   "engines": {
-    "node" : "~5.9.0"
+    "node" : ">=4"
   },
   "main": "lib/index.js"
 }
