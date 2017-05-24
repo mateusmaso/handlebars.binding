@@ -1,6 +1,7 @@
 if (typeof window === "undefined") {
-  var jsdom = require("jsdom").jsdom;
-  var document = global.document = jsdom("test");
+  var JSDOM = require("jsdom").JSDOM;
+  var dom = new JSDOM("test");
+  var document = global.document = dom.window.document;
   var window = global.window = document.defaultView;
   var chai = require("chai");
   var Handlebars = require("handlebars");

@@ -1,11 +1,11 @@
 // handlebars.binding
 // ------------------
-// v0.3.6
+// v0.3.7
 //
-// Copyright (c) 2013-2016 Mateus Maso
+// Copyright (c) 2013-2017 Mateus Maso
 // Distributed under MIT license
 //
-// http://github.com/mateusmaso/handlebars.binding
+// 
 
 
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
@@ -151,7 +151,7 @@ var Binding = function () {
   }, {
     key: "render",
     value: function render() {
-      var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
       this.runOutput();
 
@@ -166,7 +166,7 @@ var Binding = function () {
   }, {
     key: "renderAttribute",
     value: function renderAttribute() {
-      var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
       if (this.options.hash.attr == true) {
         if (this.previousOutput != this.output) {
@@ -183,7 +183,7 @@ var Binding = function () {
   }, {
     key: "renderInline",
     value: function renderInline() {
-      var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
       if ((0, _deps.getUtils)().isString(this.output)) {
         this.node.textContent = (0, _deps.getUtils)().escapeExpression(new _deps2.default.Handlebars.SafeString(this.output));
@@ -194,16 +194,16 @@ var Binding = function () {
   }, {
     key: "renderBlock",
     value: function renderBlock() {
-      var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
       if (options.initialize) {
         return _deps2.default.Handlebars.parseHTML(this.output); // gambi
       } else {
-          (0, _utils.removeBetween)(this.marker, this.delimiter).forEach(function (node) {
-            return (0, _core.unbind)(node);
-          });
-          (0, _deps.getUtils)().insertAfter(this.marker, _deps2.default.Handlebars.parseHTML(this.output));
-        }
+        (0, _utils.removeBetween)(this.marker, this.delimiter).forEach(function (node) {
+          return (0, _core.unbind)(node);
+        });
+        (0, _deps.getUtils)().insertAfter(this.marker, _deps2.default.Handlebars.parseHTML(this.output));
+      }
     }
   }, {
     key: "observe",
@@ -281,14 +281,14 @@ var ItemBinding = function (_Binding) {
   function ItemBinding() {
     _classCallCheck(this, ItemBinding);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(ItemBinding).apply(this, arguments));
+    return _possibleConstructorReturn(this, (ItemBinding.__proto__ || Object.getPrototypeOf(ItemBinding)).apply(this, arguments));
   }
 
   _createClass(ItemBinding, [{
     key: "initialize",
     value: function initialize() {
       if (this.options.hash.bind) {
-        return _get(Object.getPrototypeOf(ItemBinding.prototype), "initialize", this).call(this);
+        return _get(ItemBinding.prototype.__proto__ || Object.getPrototypeOf(ItemBinding.prototype), "initialize", this).call(this);
       } else {
         return this.runOutput();
       }
@@ -334,7 +334,7 @@ var EachBinding = function (_Binding2) {
   function EachBinding(context, keypath, value, options) {
     _classCallCheck(this, EachBinding);
 
-    var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(EachBinding).call(this, context, keypath, value, options));
+    var _this3 = _possibleConstructorReturn(this, (EachBinding.__proto__ || Object.getPrototypeOf(EachBinding)).call(this, context, keypath, value, options));
 
     _this3.itemBindings = [];
     _this3.empty = value.length == 0;
@@ -346,7 +346,7 @@ var EachBinding = function (_Binding2) {
     key: "initialize",
     value: function initialize() {
       if (this.options.hash.bind) {
-        return _get(Object.getPrototypeOf(EachBinding.prototype), "initialize", this).call(this);
+        return _get(EachBinding.prototype.__proto__ || Object.getPrototypeOf(EachBinding.prototype), "initialize", this).call(this);
       } else {
         return this.runOutput();
       }
@@ -387,7 +387,7 @@ var EachBinding = function (_Binding2) {
   }, {
     key: "render",
     value: function render() {
-      var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
       if (options.splice) {
         var splice = options.splice;
@@ -405,7 +405,7 @@ var EachBinding = function (_Binding2) {
           }
         }
       } else {
-        return _get(Object.getPrototypeOf(EachBinding.prototype), "render", this).call(this, options);
+        return _get(EachBinding.prototype.__proto__ || Object.getPrototypeOf(EachBinding.prototype), "render", this).call(this, options);
       }
     }
   }, {
@@ -479,7 +479,7 @@ var IfBinding = function (_Binding) {
   function IfBinding(context, keypath, value, options) {
     _classCallCheck(this, IfBinding);
 
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(IfBinding).call(this, context, keypath, value, options));
+    var _this = _possibleConstructorReturn(this, (IfBinding.__proto__ || Object.getPrototypeOf(IfBinding)).call(this, context, keypath, value, options));
 
     _this.falsy = (0, _utils.isFalsy)(value);
     return _this;
@@ -489,7 +489,7 @@ var IfBinding = function (_Binding) {
     key: "initialize",
     value: function initialize() {
       if (this.options.hash.bind) {
-        return _get(Object.getPrototypeOf(IfBinding.prototype), "initialize", this).call(this);
+        return _get(IfBinding.prototype.__proto__ || Object.getPrototypeOf(IfBinding.prototype), "initialize", this).call(this);
       } else {
         return this.runOutput();
       }
@@ -530,7 +530,7 @@ var IfBinding = function (_Binding) {
   }, {
     key: "renderAttribute",
     value: function renderAttribute() {
-      var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
       if (this.options.hash.attr == true) {
         this.node.removeAttribute(this.previousOutput);
@@ -654,8 +654,8 @@ function register() {
   });
 
   _deps2.default.Handlebars.registerHelper("unless", function (conditional, options) {
-    var fn = options.fn;
-    var inverse = options.inverse;
+    var fn = options.fn,
+        inverse = options.inverse;
 
     var thenHash = options.hash.then;
     var elseHash = options.hash.else;
