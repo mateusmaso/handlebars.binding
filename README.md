@@ -15,9 +15,12 @@ $ npm install --save handlebars.binding
 var Handlebars = require("handlebars");
 require("handlebars.binding").default(Handlebars);
 
+var main = document.querySelector("main");
 var context = {foo: 123};
 var template = Handlebars.templates["path/to/template"];
 var nodes = Handlebars.parseHTML(template(context));
+
+nodes.forEach((node) => main.appendChild(node));
 
 context.foo = 321;
 
