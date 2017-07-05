@@ -1,6 +1,6 @@
 // handlebars.binding
 // ------------------
-// v0.3.7
+// v0.3.8
 //
 // Copyright (c) 2013-2017 Mateus Maso
 // Distributed under MIT license
@@ -1133,7 +1133,7 @@ function isObject(object) {
 }
 
 function isString(object) {
-  return toString.call(object) == '[object String]';
+  return typeof object === 'string' || object instanceof String;
 }
 
 function uniqueId() {
