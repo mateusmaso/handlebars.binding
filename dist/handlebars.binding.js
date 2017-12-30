@@ -264,7 +264,7 @@ var Binding = function () {
 
 exports.default = Binding;
 
-},{"observe-js":21}],2:[function(require,module,exports){
+},{"observe-js":20}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -279,9 +279,9 @@ var _get = function get(object, property, receiver) { if (object === null) objec
 
 var _observeJs = require("observe-js");
 
-var _binding = require("./binding");
+var _Binding3 = require("./Binding");
 
-var _binding2 = _interopRequireDefault(_binding);
+var _Binding4 = _interopRequireDefault(_Binding3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -360,7 +360,7 @@ var ItemBinding = function (_Binding) {
   }]);
 
   return ItemBinding;
-}(_binding2.default);
+}(_Binding4.default);
 
 var EachBinding = function (_Binding2) {
   _inherits(EachBinding, _Binding2);
@@ -484,11 +484,11 @@ var EachBinding = function (_Binding2) {
   }]);
 
   return EachBinding;
-}(_binding2.default);
+}(_Binding4.default);
 
 exports.default = EachBinding;
 
-},{"./binding":4,"observe-js":21}],3:[function(require,module,exports){
+},{"./Binding":1,"observe-js":20}],3:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -501,9 +501,9 @@ var _get = function get(object, property, receiver) { if (object === null) objec
 
 var _observeJs = require("observe-js");
 
-var _binding = require("./binding");
+var _Binding2 = require("./Binding");
 
-var _binding2 = _interopRequireDefault(_binding);
+var _Binding3 = _interopRequireDefault(_Binding2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -596,13 +596,11 @@ var IfBinding = function (_Binding) {
   }]);
 
   return IfBinding;
-}(_binding2.default);
+}(_Binding3.default);
 
 exports.default = IfBinding;
 
-},{"./binding":4,"observe-js":21}],4:[function(require,module,exports){
-arguments[4][1][0].apply(exports,arguments)
-},{"dup":1,"observe-js":21}],5:[function(require,module,exports){
+},{"./Binding":1,"observe-js":20}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -628,7 +626,7 @@ exports.Binding = _Binding2.default;
 exports.IfBinding = _IfBinding2.default;
 exports.EachBinding = _EachBinding2.default;
 
-},{"./Binding":1,"./EachBinding":2,"./IfBinding":3}],6:[function(require,module,exports){
+},{"./Binding":1,"./EachBinding":2,"./IfBinding":3}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -647,7 +645,7 @@ function bind(root) {
   });
 };
 
-},{}],7:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -678,7 +676,7 @@ exports.unbind = _unbind2.default;
 exports.update = _update2.default;
 exports.registerBindingHelpers = _registerBindingHelpers2.default;
 
-},{"./bind":6,"./registerBindingHelpers":8,"./unbind":9,"./update":10}],8:[function(require,module,exports){
+},{"./bind":5,"./registerBindingHelpers":7,"./unbind":8,"./update":9}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -739,7 +737,7 @@ function registerBindingHelpers() {
   });
 };
 
-},{"../bindings":5}],9:[function(require,module,exports){
+},{"../bindings":4}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -758,7 +756,7 @@ function unbind(root) {
   });
 };
 
-},{}],10:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -776,7 +774,7 @@ function update() {
   Platform.performMicrotaskCheckpoint();
 };
 
-},{"observe-js":21}],11:[function(require,module,exports){
+},{"observe-js":20}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -842,7 +840,7 @@ if (typeof window !== "undefined" && window.Handlebars) {
   HandlebarsBinding(window.Handlebars);
 }
 
-},{"./bindings":5,"./core":7,"./utils":14,"handlebars.element":28}],12:[function(require,module,exports){
+},{"./bindings":4,"./core":6,"./utils":13,"handlebars.element":27}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -859,7 +857,7 @@ function addClass(node, value) {
   }
 }
 
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -870,7 +868,7 @@ function hasClass(node, value) {
   return node.className.match(new RegExp("(\\s|^)" + value + "(\\s|$)"));
 }
 
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -921,7 +919,7 @@ exports.addClass = _addClass2.default;
 exports.hasClass = _hasClass2.default;
 exports.isFalsy = _isFalsy2.default;
 
-},{"./addClass":12,"./hasClass":13,"./isFalsy":15,"./nodesBetween":16,"./path":17,"./removeBetween":18,"./removeClass":19,"./traverse":20}],15:[function(require,module,exports){
+},{"./addClass":11,"./hasClass":12,"./isFalsy":14,"./nodesBetween":15,"./path":16,"./removeBetween":17,"./removeClass":18,"./traverse":19}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -932,7 +930,7 @@ function isFalsy(object) {
   return !object || this.isEmpty(object);
 }
 
-},{}],16:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -952,7 +950,7 @@ function nodesBetween(firstNode, lastNode) {
   return nodes;
 }
 
-},{}],17:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -968,7 +966,7 @@ function path(context, key) {
   return object;
 }
 
-},{}],18:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -983,7 +981,7 @@ function removeBetween(firstNode, lastNode) {
   return nodes;
 }
 
-},{}],19:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -996,7 +994,7 @@ function removeClass(node, value) {
   }
 }
 
-},{}],20:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1012,7 +1010,7 @@ function traverse(node, callback) {
   }
 }
 
-},{}],21:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 (function (global){
 /*
  * Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
@@ -2735,7 +2733,7 @@ function traverse(node, callback) {
 })(typeof global !== 'undefined' && global && typeof module !== 'undefined' && module ? global : this || window);
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],22:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2776,7 +2774,7 @@ exports.registerAttribute = _registerAttribute2.default;
 exports.parseHTML = _parseHTML2.default;
 exports.parseValue = _parseValue2.default;
 
-},{"./parseHTML":23,"./parseValue":24,"./registerAttribute":25,"./registerElement":26,"./store":27}],23:[function(require,module,exports){
+},{"./parseHTML":22,"./parseValue":23,"./registerAttribute":24,"./registerElement":25,"./store":26}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2892,7 +2890,7 @@ function parseHTML(html) {
   return flatten(rootNodes);
 };
 
-},{}],24:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2919,7 +2917,7 @@ function parseValue(value, bool) {
   return bool ? value || value === "" ? true : false : value === "" ? undefined : value;
 }
 
-},{}],25:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2931,7 +2929,7 @@ function registerAttribute(name, fn, options) {
   this.attributes[name] = fn;
 }
 
-},{}],26:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2943,7 +2941,7 @@ function registerElement(name, fn, options) {
   this.elements[name] = fn;
 }
 
-},{}],27:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2976,7 +2974,7 @@ _extends(store, { hold: hold, release: release, keyFor: keyFor });
 
 exports.default = store;
 
-},{}],28:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3046,7 +3044,7 @@ if (typeof window !== "undefined" && window.Handlebars) {
   HandlebarsElement(window.Handlebars);
 }
 
-},{"./core":22,"./utils":32}],29:[function(require,module,exports){
+},{"./core":21,"./utils":31}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3059,7 +3057,7 @@ function camelize(string) {
   });
 }
 
-},{}],30:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3084,7 +3082,7 @@ function escapeExpression(value, store) {
   return this._escapeExpression(value);
 }
 
-},{}],31:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3105,7 +3103,7 @@ function flatten(array, flattenArray) {
   return flattenArray;
 }
 
-},{}],32:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3156,7 +3154,7 @@ exports.replaceWith = _replaceWith2.default;
 exports.insertAfter = _insertAfter2.default;
 exports.escapeExpression = _escapeExpression2.default;
 
-},{"./camelize":29,"./escapeExpression":30,"./flatten":31,"./insertAfter":33,"./isObject":34,"./isString":35,"./replaceWith":36,"./uniqueId":37}],33:[function(require,module,exports){
+},{"./camelize":28,"./escapeExpression":29,"./flatten":30,"./insertAfter":32,"./isObject":33,"./isString":34,"./replaceWith":35,"./uniqueId":36}],32:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3176,7 +3174,7 @@ function insertAfter(node, nodes) {
   }
 }
 
-},{}],34:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3187,7 +3185,7 @@ function isObject(object) {
   return object === Object(object);
 }
 
-},{}],35:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3198,7 +3196,7 @@ function isString(object) {
   return typeof object === 'string' || object instanceof String;
 }
 
-},{}],36:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3217,7 +3215,7 @@ function replaceWith(node, nodes) {
   }
 }
 
-},{}],37:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3233,4 +3231,4 @@ function uniqueId() {
   return generate() + generate(true) + generate(true) + generate();
 }
 
-},{}]},{},[11]);
+},{}]},{},[10]);

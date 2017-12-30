@@ -3,7 +3,7 @@ import {
   ObjectObserver
 } from "observe-js";
 
-import Binding from './binding';
+import Binding from './Binding';
 
 class ItemBinding extends Binding {
   initialize() {

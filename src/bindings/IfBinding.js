@@ -3,7 +3,7 @@ import {
   PathObserver
 } from "observe-js";
 
-import Binding from './binding';
+import Binding from './Binding';
 
 export default class IfBinding extends Binding {
   constructor(Handlebars, context, keypath, value, options) {
