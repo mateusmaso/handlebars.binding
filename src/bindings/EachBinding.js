@@ -37,9 +37,9 @@ class ItemBinding extends Binding {
         if (!this.context["$this"].hasOwnProperty(key) && key != "index") {
           noConflictParentContext[key] = this.options.hash.parentContext[key];
         }
-      })
+      });
 
-      Object.assign(this.context, noConflictParentContext)
+      Object.assign(this.context, noConflictParentContext);
     });
 
     if (isObject(this.value)) {
