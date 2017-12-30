@@ -10,7 +10,8 @@ import {
   bind,
   unbind,
   register,
-  update
+  update,
+  registerBindingHelpers
 } from './core';
 
 import {
@@ -24,38 +25,33 @@ import {
   isFalsy
 } from './utils';
 
-import deps from "./deps";
-
 export default function HandlebarsBinding(Handlebars) {
-  if (!deps.Handlebars) {
-    HandlebarsElement(Handlebars);
+  HandlebarsElement(Handlebars);
 
-    var {extend} = Handlebars.Utils;
+  var {extend} = Handlebars.Utils;
 
-    extend(deps, {Handlebars});
+  extend(Handlebars, {
+    Binding,
+    IfBinding,
+    EachBinding,
+    bind,
+    unbind,
+    update,
+    registerBindingHelpers
+  });
 
-    extend(Handlebars, {
-      Binding,
-      IfBinding,
-      EachBinding,
-      bind,
-      unbind,
-      update
-    });
+  extend(Handlebars.Utils, {
+    path,
+    traverse,
+    removeBetween,
+    nodesBetween,
+    removeClass,
+    addClass,
+    hasClass,
+    isFalsy
+  });
 
-    extend(Handlebars.Utils, {
-      path,
-      traverse,
-      removeBetween,
-      nodesBetween,
-      removeClass,
-      addClass,
-      hasClass,
-      isFalsy
-    });
-
-    register();
-  }
+  Handlebars.registerBindingHelpers();
 
   return Handlebars;
 }

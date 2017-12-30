@@ -4,9 +4,6 @@ import {
 } from "observe-js";
 
 import Binding from './binding';
-import {removeBetween} from "../utils";
-import deps, {getUtils} from "../deps";
-import {unbind} from "../core";
 
 class ItemBinding extends Binding {
   initialize() {
@@ -20,8 +17,8 @@ class ItemBinding extends Binding {
   runOutput() {
     if (this.options.hash.var) {
       this.context[this.options.hash.var] = this.value;
-    } else if (getUtils().isObject(this.value)) {
-      getUtils().extend(this.context, this.value);
+    } else if (this.Handlebars.Utils.isObject(this.value)) {
+      this.Handlebars.Utils.extend(this.context, this.value);
     }
 
     return this.setOutput(this.options.fn(this.context));
@@ -30,21 +27,21 @@ class ItemBinding extends Binding {
   observe() {
     this.parentContextObserver = new ObjectObserver(this.options.hash.parentContext);
     this.parentContextObserver.open(() => {
-      getUtils().extend(this.context, this.options.hash.parentContext)
+      this.Handlebars.Utils.extend(this.context, this.options.hash.parentContext)
     });
 
-    if (getUtils().isObject(this.value)) {
+    if (this.Handlebars.Utils.isObject(this.value)) {
       if (!this.options.hash.var) {
         this.setObserver(new ObjectObserver(this.value));
-        this.observer.open(() => getUtils().extend(this.context, this.value));
+        this.observer.open(() => this.Handlebars.Utils.extend(this.context, this.value));
       }
     }
   }
 }
 
 export default class EachBinding extends Binding {
-  constructor(context, keypath, value, options) {
-    super(context, keypath, value, options);
+  constructor(Handlebars, context, keypath, value, options) {
+    super(Handlebars, context, keypath, value, options);
     this.itemBindings = [];
     this.empty = value.length == 0;
     this.options.hash.parentContext = this.context;
@@ -77,7 +74,7 @@ export default class EachBinding extends Binding {
     this.itemBindings = [];
 
     this.value.forEach((item, index) => {
-      var itemBinding = new ItemBinding(getUtils().extend({index: index, "$this": item}, this.context), null, item, this.options);
+      var itemBinding = new ItemBinding(this.Handlebars, this.Handlebars.Utils.extend({index: index, "$this": item}, this.context), null, item, this.options);
       this.itemBindings.push(itemBinding);
       output += itemBinding.initialize();
     });
@@ -116,14 +113,14 @@ export default class EachBinding extends Binding {
     }
 
     var item = this.value[index];
-    var itemBinding = new ItemBinding(getUtils().extend({index: index, "$this": item}, this.context), null, item, this.options);
-    getUtils().insertAfter(previous, deps.Handlebars.parseHTML(itemBinding.initialize()));
+    var itemBinding = new ItemBinding(this.Handlebars, this.Handlebars.Utils.extend({index: index, "$this": item}, this.context), null, item, this.options);
+    this.Handlebars.Utils.insertAfter(previous, this.Handlebars.parseHTML(itemBinding.initialize()));
     this.itemBindings.splice(index, 0, itemBinding);
   }
 
   removeItem(index) {
     var itemBinding = this.itemBindings[index];
-    removeBetween(itemBinding.marker, itemBinding.delimiter).forEach((node) => unbind(node));
+    this.Handlebars.Utils.removeBetween(itemBinding.marker, itemBinding.delimiter).forEach((node) => this.Handlebars.unbind(node));
     itemBinding.marker.remove();
     itemBinding.delimiter.remove();
     this.itemBindings.splice(index, 1);

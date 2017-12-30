@@ -4,18 +4,8 @@ import {
   PathObserver
 } from "observe-js";
 
-import {
-  path,
-  removeClass,
-  addClass,
-  removeBetween
-} from "../utils";
-
-import deps, {getUtils} from "../deps";
-import {unbind} from "../core";
-
 export default class Binding {
-  constructor(context, keypath, value, options) {
+  constructor(Handlebars, context, keypath, value, options) {
     this.node;
     this.observer;
     this.output;
@@ -23,12 +13,13 @@ export default class Binding {
     this.marker;
     this.delimiter;
 
-    this.id = getUtils().uniqueId();
+    this.Handlebars = Handlebars;
+    this.id = this.Handlebars.Utils.uniqueId();
     this.value = value;
     this.context = context;
     this.keypath = keypath;
     this.options = options;
-    if (keypath) this.value = path(this.context, this.keypath);
+    if (keypath) this.value = this.Handlebars.Utils.path(this.context, this.keypath);
   }
 
   setNode(node) {
@@ -76,14 +67,14 @@ export default class Binding {
   initializeAttribute(node) {
     var attributeName = `binding-${this.id}`;
 
-    deps.Handlebars.registerAttribute(attributeName, (node) => {
+    this.Handlebars.registerAttribute(attributeName, (node) => {
       return null;
     }, {
       ready: (node) => {
         this.setNode(node);
         this.render({initialize: true});
         this.observe();
-        delete deps.Handlebars.attributes[attributeName];
+        delete this.Handlebars.attributes[attributeName];
       }
     });
 
@@ -94,8 +85,8 @@ export default class Binding {
     this.setNode(document.createTextNode(""));
     this.render({initialize: true});
     this.observe();
-    deps.Handlebars.store.hold(this.id, getUtils().flatten([this.node]));
-    return new deps.Handlebars.SafeString(this.createElement());
+    this.Handlebars.store.hold(this.id, this.Handlebars.Utils.flatten([this.node]));
+    return new this.Handlebars.SafeString(this.createElement());
   }
 
   initializeBlock() {
@@ -103,8 +94,8 @@ export default class Binding {
     this.setDelimiter(document.createTextNode(""));
     var nodes = this.render({initialize: true});
     this.observe();
-    deps.Handlebars.store.hold(this.id, getUtils().flatten([this.marker, nodes, this.delimiter]));
-    return new deps.Handlebars.SafeString(this.createElement());
+    this.Handlebars.store.hold(this.id, this.Handlebars.Utils.flatten([this.marker, nodes, this.delimiter]));
+    return new this.Handlebars.SafeString(this.createElement());
   }
 
   runOutput() {
@@ -134,35 +125,35 @@ export default class Binding {
         this.node.setAttribute(this.output, "");
       }
     } else if (this.options.hash.attr == "class") {
-      removeClass(this.node, this.previousOutput);
-      addClass(this.node, this.output);
+      this.Handlebars.Utils.removeClass(this.node, this.previousOutput);
+      this.Handlebars.Utils.addClass(this.node, this.output);
     } else {
       this.node.setAttribute(this.options.hash.attr, this.output);
     }
   }
 
   renderInline(options={}) {
-    if (getUtils().isString(this.output)) {
-      this.node.textContent = getUtils().escapeExpression(new deps.Handlebars.SafeString(this.output));
+    if (this.Handlebars.Utils.isString(this.output)) {
+      this.node.textContent = this.Handlebars.Utils.escapeExpression(new this.Handlebars.SafeString(this.output));
     } else {
-      this.node.textContent = getUtils().escapeExpression(this.output);
+      this.node.textContent = this.Handlebars.Utils.escapeExpression(this.output);
     }
   }
 
   renderBlock(options={}) {
     if (options.initialize) {
-      return deps.Handlebars.parseHTML(this.output); // gambi
+      return this.Handlebars.parseHTML(this.output); // gambi
     } else {
-      removeBetween(this.marker, this.delimiter).forEach((node) => unbind(node));
-      getUtils().insertAfter(this.marker, deps.Handlebars.parseHTML(this.output));
+      this.Handlebars.Utils.removeBetween(this.marker, this.delimiter).forEach((node) => this.Handlebars.unbind(node));
+      this.Handlebars.Utils.insertAfter(this.marker, this.Handlebars.parseHTML(this.output));
     }
   }
 
   observe() {
-    if (getUtils().isArray(this.value)) {
+    if (this.Handlebars.Utils.isArray(this.value)) {
       this.setObserver(new ArrayObserver(this.value));
       this.observer.open(() => this.render());
-    } else if (getUtils().isObject(this.value)) {
+    } else if (this.Handlebars.Utils.isObject(this.value)) {
       this.setObserver(new ObjectObserver(this.value));
       this.observer.open(() => this.render());
     } else {

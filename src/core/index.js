@@ -6,15 +6,8 @@ import {
   EachBinding
 } from "../bindings";
 
-import {
-  traverse,
-  path
-} from "../utils";
-
-import deps, {getUtils} from "../deps";
-
 export function bind(root) {
-  traverse(root, (node) => {
+  this.Utils.traverse(root, (node) => {
     if (node.binding) {
       node.binding.observe();
     } else if (node.bindings) {
@@ -24,7 +17,7 @@ export function bind(root) {
 };
 
 export function unbind(root) {
-  traverse(root, (node) => {
+  this.Utils.traverse(root, (node) => {
     if (node.binding) {
       node.binding.stopObserving();
     } else if (node.bindings) {
@@ -37,12 +30,15 @@ export function update() {
   Platform.performMicrotaskCheckpoint();
 };
 
-export function register() {
-  deps.Handlebars.registerHelper('bind', function(keypath, options) {
-    return new Binding(this, keypath, null, options).initialize();
+export function registerBindingHelpers() {
+  var Handlebars = this;
+  var Utils = this.Utils;
+
+  this.registerHelper('bind', function(keypath, options) {
+    return new Binding(Handlebars, this, keypath, null, options).initialize();
   });
 
-  deps.Handlebars.registerHelper('if', function(conditional, options) {
+  this.registerHelper('if', function(conditional, options) {
     var keypath;
 
     if (options.hash.bindAttr) {
@@ -50,19 +46,19 @@ export function register() {
       options.hash.bind = true;
     }
 
-    if (options.hash.bind && getUtils().isString(conditional)) {
+    if (options.hash.bind && Utils.isString(conditional)) {
       keypath = conditional;
-      conditional = path(this, keypath);
+      conditional = Utils.path(this, keypath);
     }
 
-    return new IfBinding(this, keypath, conditional, options).initialize();
+    return new IfBinding(Handlebars, this, keypath, conditional, options).initialize();
   });
 
-  deps.Handlebars.registerHelper('each', function(items, options) {
-    return new EachBinding(this, null, items, options).initialize();
+  this.registerHelper('each', function(items, options) {
+    return new EachBinding(Handlebars, this, null, items, options).initialize();
   });
 
-  deps.Handlebars.registerHelper("unless", function(conditional, options) {
+  this.registerHelper("unless", function(conditional, options) {
     var {fn, inverse} = options;
     var thenHash = options.hash.then;
     var elseHash = options.hash.else;
@@ -72,10 +68,10 @@ export function register() {
     options.hash.then = elseHash;
     options.hash.else = thenHash;
 
-    return deps.Handlebars.helpers.if.apply(this, [conditional, options]);
+    return Handlebars.helpers.if.apply(this, [conditional, options]);
   });
 
-  deps.Handlebars.registerElement('binding', function(attributes) {
+  this.registerElement('binding', function(attributes) {
     return attributes.id;
   });
 };

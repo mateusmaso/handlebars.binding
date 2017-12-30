@@ -4,18 +4,11 @@ import {
 } from "observe-js";
 
 import Binding from './binding';
-import deps, {getUtils} from "../deps";
-
-import {
-  isFalsy,
-  addClass,
-  removeClass
-} from '../utils';
 
 export default class IfBinding extends Binding {
-  constructor(context, keypath, value, options) {
-    super(context, keypath, value, options);
-    this.falsy = isFalsy(value);
+  constructor(Handlebars, context, keypath, value, options) {
+    super(Handlebars, context, keypath, value, options);
+    this.falsy = this.Handlebars.Utils.isFalsy(value);
   }
 
   initialize() {
@@ -27,11 +20,11 @@ export default class IfBinding extends Binding {
   }
 
   observe() {
-    if (getUtils().isArray(this.value)) {
+    if (this.Handlebars.Utils.isArray(this.value)) {
       this.setObserver(new ArrayObserver(this.value));
       this.observer.open(() => {
-        if (isFalsy(this.value) != this.falsy) {
-          this.falsy = isFalsy(this.value);
+        if (this.Handlebars.Utils.isFalsy(this.value) != this.falsy) {
+          this.falsy = this.Handlebars.Utils.isFalsy(this.value);
           this.render();
         }
       });
@@ -39,8 +32,8 @@ export default class IfBinding extends Binding {
       this.setObserver(new PathObserver(this.context, this.keypath));
       this.observer.open((value) => {
         this.value = value;
-        if (isFalsy(this.value) != this.falsy) {
-          this.falsy = isFalsy(this.value);
+        if (this.Handlebars.Utils.isFalsy(this.value) != this.falsy) {
+          this.falsy = this.Handlebars.Utils.isFalsy(this.value);
           this.render();
         }
       });
@@ -60,8 +53,8 @@ export default class IfBinding extends Binding {
       this.node.removeAttribute(this.previousOutput);
       if (this.output) this.node.setAttribute(this.output, "");
     } else if (this.options.hash.attr == "class") {
-      removeClass(this.node, this.previousOutput);
-      addClass(this.node, this.output);
+      this.Handlebars.Utils.removeClass(this.node, this.previousOutput);
+      this.Handlebars.Utils.addClass(this.node, this.output);
     } else {
       this.node.setAttribute(this.options.hash.attr, this.output);
     }

@@ -1,7 +1,5 @@
-import deps, {getUtils} from "../deps";
-
 export function isFalsy(object) {
-  return !object || getUtils().isEmpty(object);
+  return !object || this.isEmpty(object);
 }
 
 export function hasClass(node, value) {
