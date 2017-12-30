@@ -3,7 +3,7 @@ import {
   ObjectObserver
 } from "observe-js";
 
-import Binding from './binding';
+import Binding from './Binding';
 
 class ItemBinding extends Binding {
   initialize() {
@@ -31,7 +31,15 @@ class ItemBinding extends Binding {
 
     this.parentContextObserver = new ObjectObserver(this.options.hash.parentContext);
     this.parentContextObserver.open(() => {
-      Object.assign(this.context, this.options.hash.parentContext)
+      var noConflictParentContext = {};
+
+      Object.keys(this.options.hash.parentContext).forEach((key) => {
+        if (!this.context["$this"].hasOwnProperty(key) && key != "index") {
+          noConflictParentContext[key] = this.options.hash.parentContext[key];
+        }
+      });
+
+      Object.assign(this.context, noConflictParentContext);
     });
 
     if (isObject(this.value)) {
@@ -79,7 +87,7 @@ export default class EachBinding extends Binding {
     this.itemBindings = [];
 
     this.value.forEach((item, index) => {
-      var itemContext = Object.assign({index: index, "$this": item}, this.context);
+      var itemContext = Object.assign({}, this.context, {index: index, "$this": item});
       var itemBinding = new ItemBinding(this.Handlebars, itemContext, null, item, this.options);
       this.itemBindings.push(itemBinding);
       output += itemBinding.initialize();
@@ -121,7 +129,7 @@ export default class EachBinding extends Binding {
     }
 
     var item = this.value[index];
-    var itemContext = Object.assign({index: index, "$this": item}, this.context);
+    var itemContext = Object.assign({}, this.context, {index: index, "$this": item});
     var itemBinding = new ItemBinding(this.Handlebars, itemContext, null, item, this.options);
     insertAfter(previous, parseHTML(itemBinding.initialize()));
     this.itemBindings.splice(index, 0, itemBinding);

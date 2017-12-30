@@ -544,6 +544,24 @@ describe("handlebars.binding", function() {
             done();
           });
         });
+
+        describe("nested loops", function() {
+          it("should update context & index", function(done) {
+            var context = {items: [{subitems: [{value: 1}, {value: 2}], value: 123, value2: 123}]};
+            var div = document.createElement("div");
+            var template = Handlebars.compile("<ul>{{#each items bind=true}}<li>{{bind 'index'}} - {{bind 'value'}}<ul>{{#each subitems bind=true}}<li>{{bind 'index'}} - {{value}} - {{bind 'value2'}}</li>{{/each}}{{/each}}</ul></li></ul>");
+            div.appendChild(Handlebars.parseHTML(template(context))[0]);
+            context.items[0].subitems.push({value: 3});
+            context.items[0].value = 321;
+            context.items[0].value2 = 222;
+            Handlebars.update();
+
+            setTimeout(function() {
+              chai.expect(div.innerHTML).to.equal('<ul><li>0 - 321<ul><li>0 - 1 - 222</li><li>1 - 2 - 222</li><li>2 - 3 - 222</li></ul></li></ul>');
+              done();
+            });
+          });
+        });
       });
     });
 
