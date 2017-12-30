@@ -15,25 +15,29 @@ class ItemBinding extends Binding {
   }
 
   runOutput() {
+    var {isObject, extend} = this.Handlebars.Utils;
+
     if (this.options.hash.var) {
       this.context[this.options.hash.var] = this.value;
-    } else if (this.Handlebars.Utils.isObject(this.value)) {
-      this.Handlebars.Utils.extend(this.context, this.value);
+    } else if (isObject(this.value)) {
+      Object.assign(this.context, this.value);
     }
 
     return this.setOutput(this.options.fn(this.context));
   }
 
   observe() {
+    var {isObject, extend} = this.Handlebars.Utils;
+
     this.parentContextObserver = new ObjectObserver(this.options.hash.parentContext);
     this.parentContextObserver.open(() => {
-      this.Handlebars.Utils.extend(this.context, this.options.hash.parentContext)
+      Object.assign(this.context, this.options.hash.parentContext)
     });
 
-    if (this.Handlebars.Utils.isObject(this.value)) {
+    if (isObject(this.value)) {
       if (!this.options.hash.var) {
         this.setObserver(new ObjectObserver(this.value));
-        this.observer.open(() => this.Handlebars.Utils.extend(this.context, this.value));
+        this.observer.open(() => Object.assign(this.context, this.value));
       }
     }
   }
@@ -70,11 +74,13 @@ export default class EachBinding extends Binding {
   }
 
   runOutput() {
+    var {extend} = this.Handlebars.Utils;
     var output = "";
     this.itemBindings = [];
 
     this.value.forEach((item, index) => {
-      var itemBinding = new ItemBinding(this.Handlebars, this.Handlebars.Utils.extend({index: index, "$this": item}, this.context), null, item, this.options);
+      var itemContext = Object.assign({index: index, "$this": item}, this.context);
+      var itemBinding = new ItemBinding(this.Handlebars, itemContext, null, item, this.options);
       this.itemBindings.push(itemBinding);
       output += itemBinding.initialize();
     });
@@ -104,6 +110,8 @@ export default class EachBinding extends Binding {
   }
 
   addItem(index) {
+    var {parseHTML} = this.Handlebars;
+    var {extend, insertAfter} = this.Handlebars.Utils;
     var previous;
 
     if (this.itemBindings[index - 1]) {
@@ -113,14 +121,17 @@ export default class EachBinding extends Binding {
     }
 
     var item = this.value[index];
-    var itemBinding = new ItemBinding(this.Handlebars, this.Handlebars.Utils.extend({index: index, "$this": item}, this.context), null, item, this.options);
-    this.Handlebars.Utils.insertAfter(previous, this.Handlebars.parseHTML(itemBinding.initialize()));
+    var itemContext = Object.assign({index: index, "$this": item}, this.context);
+    var itemBinding = new ItemBinding(this.Handlebars, itemContext, null, item, this.options);
+    insertAfter(previous, parseHTML(itemBinding.initialize()));
     this.itemBindings.splice(index, 0, itemBinding);
   }
 
   removeItem(index) {
+    var {unbind} = this.Handlebars;
+    var {removeBetween} = this.Handlebars.Utils;
     var itemBinding = this.itemBindings[index];
-    this.Handlebars.Utils.removeBetween(itemBinding.marker, itemBinding.delimiter).forEach((node) => this.Handlebars.unbind(node));
+    removeBetween(itemBinding.marker, itemBinding.delimiter).forEach((node) => unbind(node));
     itemBinding.marker.remove();
     itemBinding.delimiter.remove();
     this.itemBindings.splice(index, 1);

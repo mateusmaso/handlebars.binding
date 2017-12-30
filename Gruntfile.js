@@ -25,7 +25,8 @@ module.exports = function(grunt) {
     },
     babel: {
       options: {
-        presets: ['es2015']
+        presets: ['es2015'],
+        plugins: ["transform-object-rest-spread", "transform-object-assign"]
       },
       dist: {
         files: [

@@ -6,6 +6,8 @@ import {
 
 export default class Binding {
   constructor(Handlebars, context, keypath, value, options) {
+    var {uniqueId, path} = Handlebars.Utils;
+
     this.node;
     this.observer;
     this.output;
@@ -14,12 +16,12 @@ export default class Binding {
     this.delimiter;
 
     this.Handlebars = Handlebars;
-    this.id = this.Handlebars.Utils.uniqueId();
+    this.id = uniqueId();
     this.value = value;
     this.context = context;
     this.keypath = keypath;
     this.options = options;
-    if (keypath) this.value = this.Handlebars.Utils.path(this.context, this.keypath);
+    if (keypath) this.value = path(this.context, this.keypath);
   }
 
   setNode(node) {
@@ -82,19 +84,23 @@ export default class Binding {
   }
 
   initializeInline() {
+    var {store} = this.Handlebars;
+    var {flatten} = this.Handlebars.Utils;
     this.setNode(document.createTextNode(""));
     this.render({initialize: true});
     this.observe();
-    this.Handlebars.store.hold(this.id, this.Handlebars.Utils.flatten([this.node]));
+    store.hold(this.id, flatten([this.node]));
     return new this.Handlebars.SafeString(this.createElement());
   }
 
   initializeBlock() {
+    var {store} = this.Handlebars;
+    var {flatten} = this.Handlebars.Utils;
     this.setMarker(document.createTextNode(""));
     this.setDelimiter(document.createTextNode(""));
     var nodes = this.render({initialize: true});
     this.observe();
-    this.Handlebars.store.hold(this.id, this.Handlebars.Utils.flatten([this.marker, nodes, this.delimiter]));
+    store.hold(this.id, flatten([this.marker, nodes, this.delimiter]));
     return new this.Handlebars.SafeString(this.createElement());
   }
 
@@ -119,41 +125,50 @@ export default class Binding {
   }
 
   renderAttribute(options={}) {
+    var {removeClass, addClass} = this.Handlebars.Utils;
+
     if (this.options.hash.attr == true) {
       if (this.previousOutput != this.output) {
         this.node.removeAttribute(this.previousOutput);
         this.node.setAttribute(this.output, "");
       }
     } else if (this.options.hash.attr == "class") {
-      this.Handlebars.Utils.removeClass(this.node, this.previousOutput);
-      this.Handlebars.Utils.addClass(this.node, this.output);
+      removeClass(this.node, this.previousOutput);
+      addClass(this.node, this.output);
     } else {
       this.node.setAttribute(this.options.hash.attr, this.output);
     }
   }
 
   renderInline(options={}) {
-    if (this.Handlebars.Utils.isString(this.output)) {
-      this.node.textContent = this.Handlebars.Utils.escapeExpression(new this.Handlebars.SafeString(this.output));
+    var {isString, escapeExpression} = this.Handlebars.Utils;
+
+    if (isString(this.output)) {
+      this.node.textContent = escapeExpression(new this.Handlebars.SafeString(this.output));
     } else {
-      this.node.textContent = this.Handlebars.Utils.escapeExpression(this.output);
+      this.node.textContent = escapeExpression(this.output);
     }
   }
 
   renderBlock(options={}) {
+    var {parseHTML, unbind} = this.Handlebars;
+    var {removeBetween, insertAfter} = this.Handlebars.Utils;
+
     if (options.initialize) {
-      return this.Handlebars.parseHTML(this.output); // gambi
+      return parseHTML(this.output); // gambi
     } else {
-      this.Handlebars.Utils.removeBetween(this.marker, this.delimiter).forEach((node) => this.Handlebars.unbind(node));
-      this.Handlebars.Utils.insertAfter(this.marker, this.Handlebars.parseHTML(this.output));
+      removeBetween(this.marker, this.delimiter).forEach((node) => unbind(node));
+      insertAfter(this.marker, parseHTML(this.output));
     }
   }
 
   observe() {
-    if (this.Handlebars.Utils.isArray(this.value)) {
+    var {isArray, isObject} = this.Handlebars.Utils;
+
+    if (isArray(this.value)) {
       this.setObserver(new ArrayObserver(this.value));
       this.observer.open(() => this.render());
-    } else if (this.Handlebars.Utils.isObject(this.value)) {
+    } else if (isObject(this.value)) {
       this.setObserver(new ObjectObserver(this.value));
       this.observer.open(() => this.render());
     } else {

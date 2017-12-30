@@ -7,8 +7,9 @@ import Binding from './binding';
 
 export default class IfBinding extends Binding {
   constructor(Handlebars, context, keypath, value, options) {
+    var {isFalsy} = Handlebars.Utils;
     super(Handlebars, context, keypath, value, options);
-    this.falsy = this.Handlebars.Utils.isFalsy(value);
+    this.falsy = isFalsy(value);
   }
 
   initialize() {
@@ -20,11 +21,13 @@ export default class IfBinding extends Binding {
   }
 
   observe() {
-    if (this.Handlebars.Utils.isArray(this.value)) {
+    var {isArray, isFalsy} = this.Handlebars.Utils;
+
+    if (isArray(this.value)) {
       this.setObserver(new ArrayObserver(this.value));
       this.observer.open(() => {
-        if (this.Handlebars.Utils.isFalsy(this.value) != this.falsy) {
-          this.falsy = this.Handlebars.Utils.isFalsy(this.value);
+        if (isFalsy(this.value) != this.falsy) {
+          this.falsy = isFalsy(this.value);
           this.render();
         }
       });
@@ -32,8 +35,8 @@ export default class IfBinding extends Binding {
       this.setObserver(new PathObserver(this.context, this.keypath));
       this.observer.open((value) => {
         this.value = value;
-        if (this.Handlebars.Utils.isFalsy(this.value) != this.falsy) {
-          this.falsy = this.Handlebars.Utils.isFalsy(this.value);
+        if (isFalsy(this.value) != this.falsy) {
+          this.falsy = isFalsy(this.value);
           this.render();
         }
       });
@@ -49,12 +52,14 @@ export default class IfBinding extends Binding {
   }
 
   renderAttribute(options={}) {
+    var {removeClass, addClass} = this.Handlebars.Utils;
+
     if (this.options.hash.attr == true) {
       this.node.removeAttribute(this.previousOutput);
       if (this.output) this.node.setAttribute(this.output, "");
     } else if (this.options.hash.attr == "class") {
-      this.Handlebars.Utils.removeClass(this.node, this.previousOutput);
-      this.Handlebars.Utils.addClass(this.node, this.output);
+      removeClass(this.node, this.previousOutput);
+      addClass(this.node, this.output);
     } else {
       this.node.setAttribute(this.options.hash.attr, this.output);
     }

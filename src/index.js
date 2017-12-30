@@ -25,12 +25,20 @@ import {
   isFalsy
 } from './utils';
 
+function bindAll(object, parent) {
+  Object.keys(object).forEach((key) => {
+    if (typeof object[key] === "function") {
+      object[key] = object[key].bind(parent)
+    }
+  })
+
+  return object;
+};
+
 export default function HandlebarsBinding(Handlebars) {
   HandlebarsElement(Handlebars);
 
-  var {extend} = Handlebars.Utils;
-
-  extend(Handlebars, {
+  Object.assign(Handlebars, bindAll({
     Binding,
     IfBinding,
     EachBinding,
@@ -38,9 +46,9 @@ export default function HandlebarsBinding(Handlebars) {
     unbind,
     update,
     registerBindingHelpers
-  });
+  }, Handlebars));
 
-  extend(Handlebars.Utils, {
+  Object.assign(Handlebars.Utils, bindAll({
     path,
     traverse,
     removeBetween,
@@ -48,8 +56,8 @@ export default function HandlebarsBinding(Handlebars) {
     removeClass,
     addClass,
     hasClass,
-    isFalsy
-  });
+    isFalsy,
+  }, Handlebars.Utils));
 
   Handlebars.registerBindingHelpers();
 

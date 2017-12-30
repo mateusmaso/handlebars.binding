@@ -9,6 +9,8 @@
     "data binding"
   ],
   "devDependencies": {
+    "babel-plugin-transform-object-assign": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "babelify": "^7.3.0",
     "chai": "*",
@@ -24,7 +26,7 @@
   },
   "repository": "http://github.com/mateusmaso/handlebars.binding",
   "dependencies": {
-    "handlebars.element": "~0.3.6",
+    "handlebars.element": "~0.3.8",
     "observe-js": "~0.5.7"
   },
   "scripts": {

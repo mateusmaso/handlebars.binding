@@ -1,5 +1,5 @@
-import Binding from './binding';
-import IfBinding from './if_binding';
-import EachBinding from './each_binding';
+import Binding from './Binding';
+import IfBinding from './IfBinding';
+import EachBinding from './EachBinding';
 
 export {Binding, IfBinding, EachBinding}
