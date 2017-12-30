@@ -337,7 +337,15 @@ var ItemBinding = function (_Binding) {
 
       this.parentContextObserver = new _observeJs.ObjectObserver(this.options.hash.parentContext);
       this.parentContextObserver.open(function () {
-        _extends(_this2.context, _this2.options.hash.parentContext);
+        var noConflictParentContext = {};
+
+        Object.keys(_this2.options.hash.parentContext).forEach(function (key) {
+          if (!_this2.context["$this"].hasOwnProperty(key) && key != "index") {
+            noConflictParentContext[key] = _this2.options.hash.parentContext[key];
+          }
+        });
+
+        _extends(_this2.context, noConflictParentContext);
       });
 
       if (isObject(this.value)) {
@@ -405,7 +413,7 @@ var EachBinding = function (_Binding2) {
       this.itemBindings = [];
 
       this.value.forEach(function (item, index) {
-        var itemContext = _extends({ index: index, "$this": item }, _this5.context);
+        var itemContext = _extends({}, _this5.context, { index: index, "$this": item });
         var itemBinding = new ItemBinding(_this5.Handlebars, itemContext, null, item, _this5.options);
         _this5.itemBindings.push(itemBinding);
         output += itemBinding.initialize();
@@ -454,7 +462,7 @@ var EachBinding = function (_Binding2) {
       }
 
       var item = this.value[index];
-      var itemContext = _extends({ index: index, "$this": item }, this.context);
+      var itemContext = _extends({}, this.context, { index: index, "$this": item });
       var itemBinding = new ItemBinding(this.Handlebars, itemContext, null, item, this.options);
       insertAfter(previous, parseHTML(itemBinding.initialize()));
       this.itemBindings.splice(index, 0, itemBinding);
