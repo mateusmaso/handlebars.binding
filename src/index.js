@@ -10,7 +10,8 @@ import {
   bind,
   unbind,
   register,
-  update
+  update,
+  registerBindingHelpers
 } from './core';
 
 import {
@@ -24,38 +25,41 @@ import {
   isFalsy
 } from './utils';
 
-import deps from "./deps";
+function bindAll(object, parent) {
+  Object.keys(object).forEach((key) => {
+    if (typeof object[key] === "function") {
+      object[key] = object[key].bind(parent)
+    }
+  })
+
+  return object;
+};
 
 export default function HandlebarsBinding(Handlebars) {
-  if (!deps.Handlebars) {
-    HandlebarsElement(Handlebars);
+  HandlebarsElement(Handlebars);
 
-    var {extend} = Handlebars.Utils;
+  Object.assign(Handlebars, bindAll({
+    Binding,
+    IfBinding,
+    EachBinding,
+    bind,
+    unbind,
+    update,
+    registerBindingHelpers
+  }, Handlebars));
 
-    extend(deps, {Handlebars});
+  Object.assign(Handlebars.Utils, bindAll({
+    path,
+    traverse,
+    removeBetween,
+    nodesBetween,
+    removeClass,
+    addClass,
+    hasClass,
+    isFalsy,
+  }, Handlebars.Utils));
 
-    extend(Handlebars, {
-      Binding,
-      IfBinding,
-      EachBinding,
-      bind,
-      unbind,
-      update
-    });
-
-    extend(Handlebars.Utils, {
-      path,
-      traverse,
-      removeBetween,
-      nodesBetween,
-      removeClass,
-      addClass,
-      hasClass,
-      isFalsy
-    });
-
-    register();
-  }
+  Handlebars.registerBindingHelpers();
 
   return Handlebars;
 }

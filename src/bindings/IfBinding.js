@@ -4,17 +4,11 @@ import {
 } from "observe-js";
 
 import Binding from './binding';
-import deps, {getUtils} from "../deps";
-
-import {
-  isFalsy,
-  addClass,
-  removeClass
-} from '../utils';
 
 export default class IfBinding extends Binding {
-  constructor(context, keypath, value, options) {
-    super(context, keypath, value, options);
+  constructor(Handlebars, context, keypath, value, options) {
+    var {isFalsy} = Handlebars.Utils;
+    super(Handlebars, context, keypath, value, options);
     this.falsy = isFalsy(value);
   }
 
@@ -27,7 +21,9 @@ export default class IfBinding extends Binding {
   }
 
   observe() {
-    if (getUtils().isArray(this.value)) {
+    var {isArray, isFalsy} = this.Handlebars.Utils;
+
+    if (isArray(this.value)) {
       this.setObserver(new ArrayObserver(this.value));
       this.observer.open(() => {
         if (isFalsy(this.value) != this.falsy) {
@@ -56,6 +52,8 @@ export default class IfBinding extends Binding {
   }
 
   renderAttribute(options={}) {
+    var {removeClass, addClass} = this.Handlebars.Utils;
+
     if (this.options.hash.attr == true) {
       this.node.removeAttribute(this.previousOutput);
       if (this.output) this.node.setAttribute(this.output, "");
