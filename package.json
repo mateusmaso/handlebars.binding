@@ -1,7 +1,7 @@
 {
   "name": "handlebars.binding",
   "description": "Handlebars plugin for using one-way data binding",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "author": "mateusmaso",
   "license": "MIT",
   "keywords": [

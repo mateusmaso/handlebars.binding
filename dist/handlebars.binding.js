@@ -1,6 +1,6 @@
 // handlebars.binding
 // ------------------
-// v0.3.8
+// v0.3.9
 //
 // Copyright (c) 2013-2017 Mateus Maso
 // Distributed under MIT license
