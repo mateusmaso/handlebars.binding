@@ -1,7 +1,7 @@
 {
   "name": "handlebars.binding",
   "description": "Handlebars plugin for using one-way data binding",
-  "version": "0.3.9",
+  "version": "0.4.0",
   "author": "mateusmaso",
   "license": "MIT",
   "keywords": [
@@ -26,7 +26,7 @@
   },
   "repository": "http://github.com/mateusmaso/handlebars.binding",
   "dependencies": {
-    "handlebars.element": "~0.3.8",
+    "handlebars.element": "~0.4.0",
     "observe-js": "~0.5.7"
   },
   "scripts": {

@@ -487,6 +487,18 @@ describe("handlebars.binding", function() {
       });
 
       describe("without var", function() {
+        it("should render inside select element", function(done) {
+          var context = {items: [{name: 'foo'}, {name: 'bar'}]};
+          var div = document.createElement("div");
+          var template = Handlebars.compile("<select>{{#each items bind=true}}<option>{{name}}</option>{{/each}}</select>");
+          div.appendChild(Handlebars.parseHTML(template(context))[0]);
+
+          setTimeout(function() {
+            chai.expect(div.innerHTML).to.equal('<select><option>foo</option><option>bar</option></select>');
+            done();
+          });
+        });
+
         it("should append item", function(done) {
           var context = {foo: [{value: 1}, {value: 2}, {value: 3}]};
           var div = document.createElement("div");
@@ -549,7 +561,7 @@ describe("handlebars.binding", function() {
           it("should update context & index", function(done) {
             var context = {items: [{subitems: [{value: 1}, {value: 2}], value: 123, value2: 123}]};
             var div = document.createElement("div");
-            var template = Handlebars.compile("<ul>{{#each items bind=true}}<li>{{bind 'index'}} - {{bind 'value'}}<ul>{{#each subitems bind=true}}<li>{{bind 'index'}} - {{value}} - {{bind 'value2'}}</li>{{/each}}{{/each}}</ul></li></ul>");
+            var template = Handlebars.compile("<ul>{{#each items bind=true}}<li>{{bind 'index'}} - {{bind 'value'}}<ul>{{#each subitems bind=true}}<li>{{bind 'index'}} - {{value}} - {{bind 'value2'}}</li>{{/each}}</ul></li>{{/each}}</ul>");
             div.appendChild(Handlebars.parseHTML(template(context))[0]);
             context.items[0].subitems.push({value: 3});
             context.items[0].value = 321;
